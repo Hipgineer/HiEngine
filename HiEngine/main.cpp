@@ -1,16 +1,19 @@
-﻿
-#include "./../external/SDL2-2.0.4/include/SDL.h"
+﻿//#pragma comment(lib, "SDL2main.lib") 
+//#pragma comment(lib, "SDL2.lib")
+
+// Why couldn't build the code til copy dll file although all stuff are liked already?
+#include "./../external/SDL2-2.0.20/include/SDL.h" 
 #include <iostream>
 
-//#pragma comment(lib, "SDL2main.lib") 
-//#pragma comment(lib, "SDL2.lib")
+
 // Global Parameters
 int g_screenWidth = 1280;
 int g_screenHeight = 720;
 
 
-//SDL_Window* g_window;			// window handle
-//unsigned int g_windowId;		// window id
+SDL_Window* g_window;			// window handle
+SDL_Surface* screenSurface;
+unsigned int g_windowId;		// window id
 
 void processCommandlineArgs(int argc, char* argv[])
 {
@@ -48,21 +51,21 @@ void processCommandlineArgs(int argc, char* argv[])
 
 void HiEngineDeviceGet() {};
 
-//void SDLInit(const char* title)
-//{
-//	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0)	// Initialize SDL's Video subsystem and game controllers
-//		printf("Unable to initialize SDL");
-//
-//	unsigned int flags = SDL_WINDOW_RESIZABLE;
-//
-//	//SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-//	//flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL;
-//
-//	g_window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-//		g_screenWidth, g_screenHeight, flags);
-//
-//	g_windowId = SDL_GetWindowID(g_window);
-//}
+void SDLInit(const char* title)
+{
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0)	// Initialize SDL's Video subsystem and game controllers
+		printf("Unable to initialize SDL");
+
+	unsigned int flags = SDL_WINDOW_RESIZABLE;
+
+	//SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	//flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL;
+
+	g_window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+		g_screenWidth, g_screenHeight, flags);
+
+	g_windowId = SDL_GetWindowID(g_window);
+}
 
 int main(int argc, char* argv[]) // int argc, char* argv[])
 {
@@ -74,7 +77,7 @@ int main(int argc, char* argv[]) // int argc, char* argv[])
 	// Choose which device run the simulation and render the frame.
 
 	*/
-
+	 
 	std::string str;
 #if HE_DX
 	str = "compute: DX11";
@@ -88,11 +91,25 @@ int main(int argc, char* argv[]) // int argc, char* argv[])
 	str += "Graphics: CUDA";
 #endif
 
+	// Window Title (Program Title)
 	const char* title = str.c_str();
-	//SDLInit(title);
+
+	// Initializing the Window 
+	SDLInit(title);
+
+	//screenSurface = SDL_GetWindowSurface(g_window);
+
+	//SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0xFF, 0xFF, 0xFF));
+
+	//SDL_UpdateWindowSurface(g_window);
+
+	SDL_Delay(2000);
 
 	std::cout << "Hello, world" << std::endl;
 
+	SDL_DestroyWindow(g_window);
+
+	SDL_Quit();
 
 	return 0;
 }
