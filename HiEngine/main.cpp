@@ -72,6 +72,9 @@ int main(int argc, char* argv[]) // int argc, char* argv[])
 
 	//processCommandlineArgs(argc, argv);
 
+	// Import Scenes
+
+
 	HiEngineDeviceGet(); 
 	/*
 	// Choose which device run the simulation and render the frame.
