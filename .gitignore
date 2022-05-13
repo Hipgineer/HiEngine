@@ -1,2 +1,2 @@
-HiEngine/.vs
-HiEngine/x64
+build/*
+.vs/*
