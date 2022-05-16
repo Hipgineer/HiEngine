@@ -31,7 +31,32 @@ private:
     TextureUPtr m_texture;
     TextureUPtr m_texture2;
     
+    // animation
+
+    int m_timestep = 0; // will be redefinded as global variable, check main loop.
+    bool m_pause = false; // will be redefinded as global variable, check main loop.
+    bool m_step = false; //will be redefinded as global variable, check main loop.
+
+    // clear color
     glm::vec4 m_clearColor {glm::vec4(0.1f,0.2f,0.3f,0.0f)};
+
+    // light parameter
+    struct Light {
+        glm::vec3 position { glm::vec3(3.0f, 3.0f, 3.0f) };
+        glm::vec3 ambient { glm::vec3(0.1f, 0.1f, 0.1f) };
+        glm::vec3 diffuse { glm::vec3(0.5f, 0.5f, 0.5f) };
+        glm::vec3 specular { glm::vec3(1.0f, 1.0f, 1.0f) };
+    };
+    Light m_light;
+
+    // material parameter
+    struct Material {
+        glm::vec3 ambient { glm::vec3(1.0f, 0.5f, 0.3f) };
+        glm::vec3 diffuse { glm::vec3(1.0f, 0.5f, 0.3f) };
+        glm::vec3 specular { glm::vec3(0.5f, 0.5f, 0.5f) };
+        float shininess { 32.0f };
+    };
+    Material m_material;
 
     bool m_cameraControl {false};
     glm::vec2 m_prevMousePos {glm::vec2(0.0f)};
@@ -43,10 +68,6 @@ private:
 
     int m_width {WINDOW_WIDTH};
     int m_height {WINDOW_HEIGHT};
-
-    int m_timestep = 0; // will be redefinded as global variable, check main loop.
-    bool m_pause = false; // will be redefinded as global variable, check main loop.
-    bool m_step = false; //will be redefinded as global variable, check main loop.
 };
 
 #endif //__CONTEXT_H__

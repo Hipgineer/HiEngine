@@ -1,13 +1,16 @@
 #include "context.h"
+#include "../physics/hiphysics.h"
 #include <spdlog/spdlog.h>
 #include <glad/glad.h> // had to be included before including GLFW
 #include <GLFW/glfw3.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include <stb/stb_image.h>
 
 // global variables
 GLFWwindow* g_window = nullptr;
 ContextUPtr g_context = nullptr;
+HiPhysicsUPtr g_hiPhysics = nullptr;
 
 bool g_pause = false;
 bool g_step  = false;
@@ -90,6 +93,11 @@ int main(int argc, const char** argv)
         return -1;
     }
     
+    GLFWimage images[1]; 
+    images[0].pixels = stbi_load("./image/HiIcon.jpg", &images[0].width, &images[0].height, 0, 4); //rgba channels 
+    glfwSetWindowIcon(g_window, 1, images); 
+    stbi_image_free(images[0].pixels);
+
     // glfw - make context on created windnow
     glfwMakeContextCurrent(g_window);
 
@@ -137,6 +145,11 @@ int main(int argc, const char** argv)
     glfwSetScrollCallback(g_window, OnScroll);
 
     // HiPhysics - initialize solver
+    g_hiPhysics = HiPhysics::Create();
+    if(!g_hiPhysics) {
+        SPDLOG_ERROR("failed to create HiPhysics");
+        return -1;
+    }
 
     // Main Loop
     SPDLOG_INFO("Start main loop");
@@ -159,8 +172,10 @@ int main(int argc, const char** argv)
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); // render GUI collected after "ImGui::NewFrame();"
         glfwSwapBuffers(g_window);
     }   
-    g_context.reset(); // or context = nullptr;
 
+    g_hiPhysics.reset(); //or g_solver = nullptr;
+    g_context.reset(); // or g_context = nullptr;
+    
     ImGui_ImplOpenGL3_DestroyFontsTexture();
     ImGui_ImplOpenGL3_DestroyDeviceObjects();
     ImGui_ImplOpenGL3_Shutdown();

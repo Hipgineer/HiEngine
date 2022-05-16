@@ -1,3 +1,3 @@
 C:
-@echo off
-code D:\work\exercise\openGL
+code D:\work\HiEngine
+EXIT

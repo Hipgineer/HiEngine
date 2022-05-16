@@ -12,7 +12,7 @@ set(PROJECT_NAME opengl_example)
 set(CMAKE_CXX_STANDARD 17)
 
 # macro will be used in cpp codes
-set(WINDOW_NAME "OpenGL Example")
+set(WINDOW_NAME "HiEngine")
 set(WINDOW_WIDTH 960)
 set(WINDOW_HEIGHT 540)
 

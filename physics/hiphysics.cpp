@@ -1,41 +1,42 @@
 #include "hiphysics.h"
 
-HiPhysicsSolverUPtr HiPhysicsSolver::Create() {
-    auto solver = HiPhysicsSolverUPtr(new HiPhysicsSolver());
+HiPhysicsUPtr HiPhysics::Create() {
+    auto solver = HiPhysicsUPtr(new HiPhysics());
     if(!solver->Init())
         return nullptr;
     return std::move(solver);
 }
 
 
-void HiPhysicsSolver::SetParticles() {
+void HiPhysics::SetParticles() {
 
 }
 
-void HiPhysicsSolver::SetVelocities() {
+void HiPhysics::SetVelocities() {
 
 }
 
-void HiPhysicsSolver::SetPhases() {
+void HiPhysics::SetPhases() {
 
 }
 
-void HiPhysicsSolver::SetActive() {
+void HiPhysics::SetActive() {
 
 }
 
-void HiPhysicsSolver::SetActiveCount() {
+void HiPhysics::SetActiveCount() {
 
 }
 
-void HiPhysicsSolver::SetParams() {
+void HiPhysics::SetParams() {
 
 }
 
-void HiPhysicsSolver::UpdateSolver() {
+void HiPhysics::UpdateSolver() {
 
 }
 
-bool HiPhysicsSolver::Init () {
+bool HiPhysics::Init () {
+    
     return true;
 }
