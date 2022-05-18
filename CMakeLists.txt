@@ -8,7 +8,7 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-set(PROJECT_NAME opengl_example)
+set(PROJECT_NAME HiEngine)
 set(CMAKE_CXX_STANDARD 17)
 
 # macro will be used in cpp codes
@@ -30,6 +30,8 @@ add_executable(${PROJECT_NAME}
     src/vertex_layout.cpp src/vertex_layout.h
     src/image.cpp src/image.h
     src/texture.cpp src/texture.h
+    src/mesh.cpp src/mesh.h
+    src/model.cpp src/model.h
     physics/hiphysics.cpp physics/hiphysics.h
     )
 

@@ -11,59 +11,10 @@ ContextUPtr Context::Create() {
 
 bool Context::Init() {
 
-    float vertices[] = { // pos.xyz, normal.xyz, texcoord.uv
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,
-
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-
-        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f,
-        0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f,
-    };
-
-    uint32_t indices[] = {
-         0,  2,  1,  2,  0,  3,
-         4,  5,  6,  6,  7,  4,
-         8,  9, 10, 10, 11,  8,
-        12, 14, 13, 14, 12, 15,
-        16, 17, 18, 18, 19, 16,
-        20, 22, 21, 22, 20, 23,
-    };
-
-    m_vertexLayout = VertexLayout::Create();
-
-    // setting the format of vertices
-    m_vertexBuffer = Buffer::CreateWithData(GL_ARRAY_BUFFER,GL_STATIC_DRAW, vertices, sizeof(float)*8*6*4);
-
-    // setting the format of vertices
-    m_vertexLayout->SetAttrib(0, 3, GL_FLOAT, GL_FALSE, sizeof(float)*8, 0);
-    m_vertexLayout->SetAttrib(1, 3, GL_FLOAT, GL_FALSE, sizeof(float)*8, sizeof(float)*3);
-    m_vertexLayout->SetAttrib(2, 2, GL_FLOAT, GL_FALSE, sizeof(float)*8, sizeof(float)*6);
-
-    // setting the format of triangle indices 
-    m_indexBuffer = Buffer::CreateWithData(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices, sizeof(uint32_t)*36);
+    m_box = Mesh::CreateBox();
+    m_model = Model::Load("./model/backpack.obj");
+    if (!m_model)
+        return false;
 
     m_simpleProgram = Program::Create("./shader/simple.vs", "./shader/simple.fs");
     if (!m_simpleProgram)
@@ -91,8 +42,14 @@ bool Context::Init() {
         image2->GetWidth(), image2->GetHeight(), image2->GetChannelCount());
     m_texture2= Texture::CreateFromImage(image2.get());
 
-    m_material.diffuse = Texture::CreateFromImage(Image::Load("./image/container2.png").get()); 
-    m_material.specular = Texture::CreateFromImage(Image::Load("./image/container2_specular.png").get()); 
+    // m_material.diffuse = Texture::CreateFromImage(Image::Load("./image/container2.png").get()); 
+    // m_material.specular = Texture::CreateFromImage(Image::Load("./image/container2_specular.png").get());
+
+    m_material.diffuse = Texture::CreateFromImage(
+        Image::CreateSingleColorImage(4, 4, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)).get());
+
+    m_material.specular = Texture::CreateFromImage(
+        Image::CreateSingleColorImage(4, 4, glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)).get());
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_texture->Get());
@@ -138,6 +95,8 @@ void Context::Render() {
         }
         
         ImGui::Checkbox("animation", &m_pause);
+        ImGui::Checkbox("flash light", &m_flashLightMode);
+        
     }
     ImGui::End();
 
@@ -155,44 +114,47 @@ void Context::Render() {
     auto view = glm::lookAt(m_cameraPos,m_cameraPos+m_cameraFront,m_cameraUp);
     auto proj = glm::perspective(glm::radians(45.0f), (float)m_width/(float)m_height, 0.01f, 10.0f);
 
-    // after computing projection and view matrix
-    auto lightModelTransform = glm::translate(glm::mat4(1.0), m_light.position) * glm::scale(glm::mat4(1.0), glm::vec3(0.1f));
-    m_simpleProgram->Use();
-    m_simpleProgram->SetUniform("color", glm::vec4(m_light.ambient + m_light.diffuse, 1.0f));
-    m_simpleProgram->SetUniform("transform", proj * view * lightModelTransform);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+    glm::vec3 lightPos = m_light.position;
+    glm::vec3 lightDir = m_light.direction;
+    if(m_flashLightMode) {
+        lightPos = m_cameraPos;
+        lightDir = m_cameraFront;
+    } else {
+        // after computing projection and view matrix
+        auto lightModelTransform = glm::translate(glm::mat4(1.0), m_light.position) * glm::scale(glm::mat4(1.0), glm::vec3(0.1f));
+        m_simpleProgram->Use();
+        m_simpleProgram->SetUniform("color", glm::vec4(m_light.ambient + m_light.diffuse, 1.0f));
+        m_simpleProgram->SetUniform("transform", proj * view * lightModelTransform);
+        m_box->Draw(m_simpleProgram.get());
+    }
 
 
-    // visualize box
     m_program->Use();
-    m_program->SetUniform("viewPos",m_cameraPos);
-    m_program->SetUniform("light.position", m_light.position);
-    m_program->SetUniform("light.direction", m_light.direction);
+    m_program->SetUniform("viewPos", m_cameraPos);
+    m_program->SetUniform("light.position", lightPos);
+    m_program->SetUniform("light.direction", lightDir);
     m_program->SetUniform("light.cutoff", glm::vec2(
-        cosf(glm::radians(m_light.cutoff[0])),
-        cosf(glm::radians(m_light.cutoff[0] + m_light.cutoff[1]))));
+                                              cosf(glm::radians(m_light.cutoff[0])),
+                                              cosf(glm::radians(m_light.cutoff[0] + m_light.cutoff[1]))));
     m_program->SetUniform("light.attenuation", GetAttenuationCoeff(m_light.distance));
     m_program->SetUniform("light.ambient", m_light.ambient);
     m_program->SetUniform("light.diffuse", m_light.diffuse);
     m_program->SetUniform("light.specular", m_light.specular);
+
     m_program->SetUniform("material.diffuse", 0);
+    m_program->SetUniform("material.specular", 1);
+    m_program->SetUniform("material.shininess", m_material.shininess);
     glActiveTexture(GL_TEXTURE0);
     m_material.diffuse->Bind();
-    m_program->SetUniform("material.specular", 1);
     glActiveTexture(GL_TEXTURE1);
     m_material.specular->Bind();
-    m_program->SetUniform("material.shininess", m_material.shininess);
 
-    auto transform = proj * view * model;
+    auto modelTransform = glm::mat4(1.0f);
+    auto transform = proj * view * modelTransform;
     m_program->SetUniform("transform", transform);
-    m_program->SetUniform("modelTransform", model);
-
-    if (!m_pause || m_step)
-    {
-        m_timestep += 1;
-        m_step = false;
-    }
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    m_program->SetUniform("modelTransform", modelTransform);
+    m_model->Draw(m_program.get());
 }
 
 void Context::ProcessInput(GLFWwindow* window) {
@@ -209,9 +171,9 @@ void Context::ProcessInput(GLFWwindow* window) {
         m_cameraPos -= cameraSpeed * cameraRight;
         
     auto cameraUp = glm::normalize(glm::cross(-m_cameraFront, cameraRight));
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-        m_cameraPos += cameraSpeed * cameraUp;
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        m_cameraPos += cameraSpeed * cameraUp;
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
         m_cameraPos -= cameraSpeed * cameraUp;
         
 }
