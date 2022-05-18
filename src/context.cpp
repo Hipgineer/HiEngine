@@ -175,7 +175,6 @@ void Context::ProcessInput(GLFWwindow* window) {
         m_cameraPos += cameraSpeed * cameraUp;
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
         m_cameraPos -= cameraSpeed * cameraUp;
-        
 }
 
 void Context::MouseMove(double x, double y) {
