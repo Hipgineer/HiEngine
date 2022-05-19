@@ -15,6 +15,7 @@ class Context {
 public:
     static ContextUPtr Create();
     void Render();
+
     void ProcessInput(GLFWwindow* window);
     void MouseMove(double x, double y);
     void MouseButton(int button, int action, double x, double y);
@@ -27,6 +28,7 @@ private:
     bool Init();
     ProgramUPtr m_program;
     ProgramUPtr m_simpleProgram;
+    ProgramUPtr m_simpleLightingProgram;
 
     MeshUPtr m_box;
     ModelUPtr m_model;
@@ -62,6 +64,13 @@ private:
         float shininess { 32.0f };
     };
     Material m_material;
+    
+    struct MaterialBasic {
+        glm::vec3 diffuse { glm::vec3(0.5f, 0.5f, 0.5f) };
+        glm::vec3 specular { glm::vec3(1.0f, 1.0f, 1.0f) };
+        float shininess { 32.0f };
+    };
+    MaterialBasic m_materialBasic;
 
     bool m_cameraControl {false};
     glm::vec2 m_prevMousePos {glm::vec2(0.0f)};
