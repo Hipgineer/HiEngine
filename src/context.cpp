@@ -11,16 +11,20 @@ ContextUPtr Context::Create() {
 
 bool Context::Init() {
 
-    m_box = Mesh::CreateBox();
-    m_model = Model::Load("./model/backpack.obj");
+    m_box = Mesh::CreateSphere();
+    m_model = Model::Load("./models/backpack/backpack.obj");
     if (!m_model)
         return false;
 
     m_simpleProgram = Program::Create("./shader/simple.vs", "./shader/simple.fs");
     if (!m_simpleProgram)
         return false;
+        
+    m_simpleLightingProgram = Program::Create("./shader/simpleLighting.vs", "./shader/simpleLighting.fs");
+    if (!m_simpleLightingProgram)
+        return false;
 
-    m_program = Program::Create("./shader/lighting.vs", "./shader/lighting.fs");
+    m_program = Program::Create("./shader/objLighting.vs", "./shader/objLighting.fs");
     if (!m_program)
         return false;
 
@@ -109,7 +113,6 @@ void Context::Render() {
         glm::rotate(glm::mat4(1.0f), glm::radians(m_cameraYaw), glm::vec3(0.0f,1.0f,0.0f)) *
         glm::rotate(glm::mat4(1.0f), glm::radians(m_cameraPitch), glm::vec3(1.0f,0.0f,0.0f)) *
         glm::vec4(0.0f,0.0f,-1.0f,0.0f);
-    m_program->Use(); 
     auto model = glm::rotate(glm::mat4(1.0f), glm::radians((float)m_timestep), glm::vec3(1.0f,0.5f,0.0f));
     auto view = glm::lookAt(m_cameraPos,m_cameraPos+m_cameraFront,m_cameraUp);
     auto proj = glm::perspective(glm::radians(45.0f), (float)m_width/(float)m_height, 0.01f, 10.0f);
@@ -130,31 +133,42 @@ void Context::Render() {
     }
 
 
-    m_program->Use();
-    m_program->SetUniform("viewPos", m_cameraPos);
-    m_program->SetUniform("light.position", lightPos);
-    m_program->SetUniform("light.direction", lightDir);
-    m_program->SetUniform("light.cutoff", glm::vec2(
+    m_simpleLightingProgram->Use();
+    m_simpleLightingProgram->SetUniform("viewPos", m_cameraPos);
+    m_simpleLightingProgram->SetUniform("light.position", lightPos);
+    m_simpleLightingProgram->SetUniform("light.direction", lightDir);
+    m_simpleLightingProgram->SetUniform("light.cutoff", glm::vec2(
                                               cosf(glm::radians(m_light.cutoff[0])),
                                               cosf(glm::radians(m_light.cutoff[0] + m_light.cutoff[1]))));
-    m_program->SetUniform("light.attenuation", GetAttenuationCoeff(m_light.distance));
-    m_program->SetUniform("light.ambient", m_light.ambient);
-    m_program->SetUniform("light.diffuse", m_light.diffuse);
-    m_program->SetUniform("light.specular", m_light.specular);
+    m_simpleLightingProgram->SetUniform("light.attenuation", GetAttenuationCoeff(m_light.distance));
+    m_simpleLightingProgram->SetUniform("light.ambient", m_light.ambient);
+    m_simpleLightingProgram->SetUniform("light.diffuse", m_light.diffuse);
+    m_simpleLightingProgram->SetUniform("light.specular", m_light.specular);
 
-    m_program->SetUniform("material.diffuse", 0);
-    m_program->SetUniform("material.specular", 1);
-    m_program->SetUniform("material.shininess", m_material.shininess);
-    glActiveTexture(GL_TEXTURE0);
-    m_material.diffuse->Bind();
-    glActiveTexture(GL_TEXTURE1);
-    m_material.specular->Bind();
+    m_simpleLightingProgram->SetUniform("material.diffuse", m_materialBasic.diffuse);
+    m_simpleLightingProgram->SetUniform("material.specular", m_materialBasic.specular);
+    m_simpleLightingProgram->SetUniform("material.shininess", m_materialBasic.shininess);
 
-    auto modelTransform = glm::mat4(1.0f);
+    // m_program->SetUniform("material.diffuse", 0);
+    // m_program->SetUniform("material.specular", 1);
+    // m_program->SetUniform("material.shininess", m_material.shininess);
+    // glActiveTexture(GL_TEXTURE0);
+    // m_material.diffuse->Bind();
+    // glActiveTexture(GL_TEXTURE1);
+    // m_material.specular->Bind();
+
+    auto modelTransform = glm::translate(glm::mat4(1.0), glm::vec3((float)m_timestep*0.01f, 0.0f,0.0f));
+    auto models = glm::translate(glm::mat4(1.0), glm::vec3((float)m_timestep*0.01f, 0.0f,0.0f));
     auto transform = proj * view * modelTransform;
-    m_program->SetUniform("transform", transform);
-    m_program->SetUniform("modelTransform", modelTransform);
-    m_model->Draw(m_program.get());
+    m_simpleLightingProgram->SetUniform("transform", transform);
+    m_simpleLightingProgram->SetUniform("modelTransform", modelTransform);
+    m_box->Draw(m_simpleLightingProgram.get());
+
+    if (!m_pause || m_step)
+    {
+        m_timestep++;
+        m_step = false;
+    }
 }
 
 void Context::ProcessInput(GLFWwindow* window) {
