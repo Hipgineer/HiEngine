@@ -86,6 +86,60 @@ MeshUPtr Mesh::CreateBox() {
 }
 
 
+MeshUPtr Mesh::CreateSphere() {
+    
+    std::vector<Vertex> vertices;
+    std::vector<uint32_t> indices;
+
+    int8_t slices      = 20;
+    int8_t segments    = 20;
+    float radius       = 1;
+
+    const float kPi = 3.141592653589f;
+    const float k2Pi = 2.0f*kPi;
+
+    float dTheta = kPi / slices;
+	float dPhi = k2Pi / segments;
+
+	int vertsPerRow = segments + 1;
+
+	for (int i = 0; i <= slices; ++i)
+	{
+		float theta = dTheta*i;
+
+		for (int j = 0; j <= segments; ++j)
+		{
+			float phi = dPhi*j;
+
+			float x = sinf(theta)*cosf(phi);
+			float y = cosf(theta);
+			float z = sinf(theta)*sinf(phi);
+
+			vertices.push_back(Vertex{glm::vec3(x, y, z)*radius, glm::vec3(x, y, z), glm::vec2(0.0f,0.0f)});
+
+			if (i > 0 && j > 0)
+			{
+				int a = i*vertsPerRow + j;
+				int b = (i - 1)*vertsPerRow + j;
+				int c = (i - 1)*vertsPerRow + j - 1;
+				int d = i*vertsPerRow + j - 1;
+
+				// add a quad for this slice
+				indices.push_back(b);
+				indices.push_back(a);
+				indices.push_back(d);
+
+				indices.push_back(b);
+				indices.push_back(d);
+				indices.push_back(c);
+			}
+		}
+	}
+
+    return Create(vertices, indices, GL_TRIANGLES);
+}
+
+
 void Material::SetToProgram(const Program* program) const {
     int textureCount = 0;
     if (diffuse)
