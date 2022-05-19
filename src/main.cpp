@@ -1,5 +1,5 @@
 #include "context.h"
-#include "../physics/hiphysics.h"
+#include "../HiPhysics/hiphysics.h"
 #include <spdlog/spdlog.h>
 #include <glad/glad.h> // had to be included before including GLFW
 #include <GLFW/glfw3.h>

@@ -32,7 +32,7 @@ add_executable(${PROJECT_NAME}
     src/texture.cpp src/texture.h
     src/mesh.cpp src/mesh.h
     src/model.cpp src/model.h
-    physics/hiphysics.cpp physics/hiphysics.h
+    HiPhysics/hiphysics.cpp HiPhysics/hiphysics.h
     )
 
 include(Dependency.cmake)
