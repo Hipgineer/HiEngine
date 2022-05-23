@@ -86,14 +86,14 @@ MeshUPtr Mesh::CreateBox() {
 }
 
 
-MeshUPtr Mesh::CreateSphere() {
+MeshUPtr Mesh::CreateSphere(int8_t slices = 20, int8_t segments = 20, float radius = 1) {
     
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
 
-    int8_t slices      = 20;
-    int8_t segments    = 20;
-    float radius       = 1;
+    // int8_t slices      = 20;
+    // int8_t segments    = 20;
+    // float radius       = 1;
 
     const float kPi = 3.141592653589f;
     const float k2Pi = 2.0f*kPi;
@@ -139,6 +139,12 @@ MeshUPtr Mesh::CreateSphere() {
     return Create(vertices, indices, GL_TRIANGLES);
 }
 
+
+// MeshUPtr Mesh::CreateSpheres(int8_t slices = 20, int8_t segments = 20, float radius = 1, glm::vec3) {
+    
+//     MeshUPtr aSphere = CreateSphere(slices, segments, radius);
+//     return Create(vertices, indices, GL_TRIANGLES);
+// }
 
 void Material::SetToProgram(const Program* program) const {
     int textureCount = 0;

@@ -38,7 +38,8 @@ public:
         const std::vector<uint32_t> &indices,
         uint32_t primitiveType);
     static MeshUPtr CreateBox();
-    static MeshUPtr CreateSphere();
+    static MeshUPtr CreateSphere(int8_t slices, int8_t segments, float radius);
+    static MeshUPtr CreateSpheres(int8_t slices, int8_t segments, float radius);
 
     const VertexLayout *GetVertexLayout() const { return m_vertexLayout.get(); }
     BufferPtr GetVertexBuffer() const { return m_vertexBuffer; }

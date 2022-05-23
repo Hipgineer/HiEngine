@@ -31,6 +31,7 @@ private:
     ProgramUPtr m_simpleLightingProgram;
 
     MeshUPtr m_box;
+    MeshUPtr m_spheres;
     ModelUPtr m_model;
     TextureUPtr m_texture;
     TextureUPtr m_texture2;
