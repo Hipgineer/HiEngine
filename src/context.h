@@ -9,11 +9,13 @@
 #include "texture.h"
 #include "mesh.h"
 #include "model.h"
+#include "../HiPhysics/hiphysics.h"
 
 CLASS_PTR(Context)
 class Context {
 public:
     static ContextUPtr Create();
+    // void Update(std::vector<glm::vec3>& positions); // g_solver
     void Render();
 
     void ProcessInput(GLFWwindow* window);
@@ -31,7 +33,7 @@ private:
     ProgramUPtr m_simpleLightingProgram;
 
     MeshUPtr m_box;
-    MeshUPtr m_spheres;
+    std::vector<MeshUPtr> m_boxes;
     ModelUPtr m_model;
     TextureUPtr m_texture;
     TextureUPtr m_texture2;

@@ -35,7 +35,7 @@ bool Program::Link(const std::vector<ShaderPtr>& shaders){
     if (!success) {
         char infoLog[1024];
         glGetProgramInfoLog(m_program, 1024, nullptr, infoLog);
-        SPDLOG_ERROR("faailed to link program: {}", infoLog);
+        SPDLOG_ERROR("failed to link program: {}", infoLog);
         return false;
     }
     return true;

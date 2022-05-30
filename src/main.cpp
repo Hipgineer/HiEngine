@@ -201,7 +201,15 @@ int main(int argc, const char** argv)
         if (!g_pause || g_step)
         {
             //some callbacks (upside) that interacts with HiPhysics
-            g_hiPhysics->UpdateSolver();
+            // g_hiPhysics->UpdateSolver();
+            auto& positions = g_hiPhysics->GetPositions();
+            // printf("%lf", positions[0].x);
+            
+            // TODO
+            // --update positions to VBO by "g_context->Update(positions);"
+            // --recheck How Nvidia FleX did! 
+
+            // g_context->Update(positions);
             //BufferMapping - HiPhysics to opengl Context
 
             g_step = false;

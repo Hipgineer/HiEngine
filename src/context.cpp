@@ -11,8 +11,7 @@ ContextUPtr Context::Create() {
 
 bool Context::Init() {
 
-    m_box = Mesh::CreateSphere(20, 20, 0.05f);
-    m_spheres = Mesh::CreateSphere(20, 20, 0.05f);
+    m_box = Mesh::CreateSphere(10, 10, 0.05f);
     m_model = Model::Load("./models/backpack/backpack.obj");
     if (!m_model)
         return false;
@@ -68,6 +67,14 @@ bool Context::Init() {
 
     return true;
 }
+
+// void Context::Update(std::vector<glm::vec3>& positions) {
+//     const uint32_t numParticles = hiPhysics->GetActiveCount();
+
+//     if (!numParticles) {
+//         auto* positions = &hiPhysics->GetPositions();
+//     }
+// }
 
 void Context::Render() {
     // imgui - setting GUI 
@@ -157,7 +164,7 @@ void Context::Render() {
     // m_material.diffuse->Bind();
     // glActiveTexture(GL_TEXTURE1);
     // m_material.specular->Bind();
-    const int8_t len = 50;
+    const int8_t len = 10;
     int8_t arGap[len];
     for (int8_t ari = 0; ari < len; ari++) arGap[ari] = ari;
     int8_t ii = 0;
