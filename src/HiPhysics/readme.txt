@@ -1,1 +1,3 @@
-HiPhysics, which is physics core of the HiEngine, is private.
+#HiPhysics
+- is the physics engine of the HiEngine.
+- is private yet. it's under developing.
