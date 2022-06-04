@@ -9,14 +9,14 @@
 #include "texture.h"
 #include "mesh.h"
 #include "model.h"
-#include "../HiPhysics/hiphysics.h"
+#include "HiPhysics/hiphysics.h"
 
 CLASS_PTR(Context)
 class Context {
 public:
     static ContextUPtr Create();
     // void Update(std::vector<glm::vec3>& positions); // g_solver
-    void UpdateScene(std::vector<glm::vec3>* Position);
+    bool UpdateScene(std::vector<glm::vec3>* positions);
     void Render();
 
     void ProcessInput(GLFWwindow* window);
@@ -83,6 +83,8 @@ private:
     glm::vec3 m_cameraPos { glm::vec3(0.0f,0.0f,3.0f)};
     glm::vec3 m_cameraFront { glm::vec3(0.0f,0.0f,-1.0f)};
     glm::vec3 m_cameraUp { glm::vec3(0.0f,1.0f,0.0f)};
+
+    std::vector<glm::vec3> m_positions;
 
     int m_width {WINDOW_WIDTH};
     int m_height {WINDOW_HEIGHT};

@@ -1,6 +1,6 @@
 #include "context.h"
 #include "simbuffer.h"
-#include "../HiPhysics/hiphysics.h"
+#include "HiPhysics/hiphysics.h"
 #include <spdlog/spdlog.h>
 #include <glad/glad.h> // had to be included before including GLFW
 #include <GLFW/glfw3.h>
@@ -224,7 +224,16 @@ int main(int argc, const char** argv)
             g_step = false;
         }
         
-        g_hiPhysics->GetPositions(&g_buffer->m_positions);
+        if (!g_hiPhysics->GetPositions(&g_buffer->m_positions)) {
+            SPDLOG_ERROR("failed to copy solver data to simBuffer.");
+            return -1;
+        }
+        
+
+        if (!g_context->UpdateScene(&g_buffer->m_positions)){
+            SPDLOG_ERROR("failed to copy buffer data to context");
+            return -1;
+        }
 
         g_context->ProcessInput(g_window); //for every signal (ex. cameramoving)
         g_context->Render();

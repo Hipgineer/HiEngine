@@ -68,13 +68,17 @@ bool Context::Init() {
     return true;
 }
 
-// void Context::Update(std::vector<glm::vec3>& positions) {
-//     const uint32_t numParticles = hiPhysics->GetActiveCount();
-
-//     if (!numParticles) {
-//         auto* positions = &hiPhysics->GetPositions();
-//     }
-// }
+bool Context::UpdateScene(std::vector<glm::vec3>* positions) {
+    uint64_t count = (int)(positions->size());
+    if (count)
+    {
+        m_positions.resize(count);
+        std::copy( positions->begin(), positions->end(), m_positions.begin());
+        return true;
+    }
+    else
+        return false;
+}
 
 void Context::Render() {
     // imgui - setting GUI 
@@ -164,28 +168,20 @@ void Context::Render() {
     // m_material.diffuse->Bind();
     // glActiveTexture(GL_TEXTURE1);
     // m_material.specular->Bind();
-    const int8_t len = 10;
-    int8_t arGap[len];
-    for (int8_t ari = 0; ari < len; ari++) arGap[ari] = ari;
-    int8_t ii = 0;
-    int8_t jj = 0;
-    int8_t kk = 0;
-    // for (ii; ii < (sizeof(arGap)/sizeof(int8_t)); ii++)
-    for (ii=0; ii < len; ii++)
+    
+    // auto modelTransform = glm::translate(glm::mat4(1.0), glm::vec3((float)m_timestep*0.01f, 0.0f,0.0f));
+    // auto models = glm::translate(glm::mat4(1.0), glm::vec3((float)m_timestep*0.01f, 0.0f,0.0f));
+
+    // TODO : 
+    std::vector<glm::vec3>::iterator ptr;
+    for (ptr = m_positions.begin(); ptr != m_positions.end(); ++ptr)
     {
-        for (jj=0; jj < len; jj++)
-        {
-            for (kk=0; kk < len; kk++)
-            {
-                // auto modelTransform = glm::translate(glm::mat4(1.0), glm::vec3((float)m_timestep*0.01f, 0.0f,0.0f));
-                // auto models = glm::translate(glm::mat4(1.0), glm::vec3((float)m_timestep*0.01f, 0.0f,0.0f));
-                auto modelTransform = glm::translate(glm::mat4(1.0), glm::vec3((float)arGap[ii] * 0.1f, (float)arGap[jj] * 0.1f, (float)arGap[kk] * 0.1f));
-                auto transform = proj * view * modelTransform;
-                m_simpleLightingProgram->SetUniform("transform", transform);
-                m_simpleLightingProgram->SetUniform("modelTransform", modelTransform);
-                m_box->Draw(m_simpleLightingProgram.get());
-            }
-        }
+        // cout << *ptr << " ";
+        auto modelTransform = glm::translate(glm::mat4(1.0), *ptr);
+        auto transform = proj * view * modelTransform;
+        m_simpleLightingProgram->SetUniform("transform", transform);
+        m_simpleLightingProgram->SetUniform("modelTransform", modelTransform);
+        m_box->Draw(m_simpleLightingProgram.get());
     }
 
     if (!m_pause || m_step)
