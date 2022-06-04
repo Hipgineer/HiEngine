@@ -16,6 +16,7 @@ class Context {
 public:
     static ContextUPtr Create();
     // void Update(std::vector<glm::vec3>& positions); // g_solver
+    void UpdateScene(std::vector<glm::vec3>* Position);
     void Render();
 
     void ProcessInput(GLFWwindow* window);

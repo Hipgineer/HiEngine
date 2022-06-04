@@ -1,4 +1,5 @@
 #include "context.h"
+#include "simbuffer.h"
 #include "../HiPhysics/hiphysics.h"
 #include <spdlog/spdlog.h>
 #include <glad/glad.h> // had to be included before including GLFW
@@ -7,17 +8,26 @@
 #include <imgui_impl_opengl3.h>
 #include <stb/stb_image.h>
 
-// global variables
+// o =========================================================================== o
+// |                                                                             |
+// |                                                                             |
+// |                               GLOBAL VARIABLE                               |
+// |                                                                             |
+// |                                                                             |
+// o =========================================================================== o
 GLFWwindow* g_window = nullptr;
 ContextUPtr g_context = nullptr;
 HiPhysicsUPtr g_hiPhysics = nullptr;
+SimBufferPtr g_buffer;
 
 bool g_pause = false;
 bool g_step  = false;
 
 // o =========================================================================== o
 // |                                                                             |
+// |                                                                             |
 // |                           GLFW Callback Functions                           |
+// |                                                                             |
 // |                                                                             |
 // o =========================================================================== o
 
@@ -77,10 +87,11 @@ void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
     if (key == GLFW_KEY_O && (action == GLFW_PRESS || action == GLFW_REPEAT)) g_step  = true;
 }
 
-
 // o =========================================================================== o
 // |                                                                             |
+// |                                                                             |
 // |                                 MAIN                                        |
+// |                                                                             |
 // |                                                                             |
 // o =========================================================================== o
 int main(int argc, const char** argv)
@@ -188,6 +199,10 @@ int main(int argc, const char** argv)
         return -1;
     }
 
+    // SimBuffer - initialize Buffer
+    g_buffer = SimBuffer::Create();
+    // g_buffer = &SimBuffer::SimBuffer();
+
     // Main Loop
     SPDLOG_INFO("Start main loop");
     while (!glfwWindowShouldClose(g_window)) {
@@ -202,18 +217,15 @@ int main(int argc, const char** argv)
         {
             //some callbacks (upside) that interacts with HiPhysics
             // g_hiPhysics->UpdateSolver();
-            auto& positions = g_hiPhysics->GetPositions();
-            // printf("%lf", positions[0].x);
-            
-            // TODO
-            // --update positions to VBO by "g_context->Update(positions);"
-            // --recheck How Nvidia FleX did! 
-
+        
             // g_context->Update(positions);
             //BufferMapping - HiPhysics to opengl Context
 
             g_step = false;
         }
+        
+        g_hiPhysics->GetPositions(&g_buffer->m_positions);
+
         g_context->ProcessInput(g_window); //for every signal (ex. cameramoving)
         g_context->Render();
         
