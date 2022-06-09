@@ -1,6 +1,8 @@
 #include "context.h"
 #include "simbuffer.h"
 #include "HiPhysics/hiphysics.h"
+
+#include <vector>
 #include <spdlog/spdlog.h>
 #include <glad/glad.h> // had to be included before including GLFW
 #include <GLFW/glfw3.h>
@@ -18,11 +20,14 @@
 GLFWwindow* g_window = nullptr;
 ContextUPtr g_context = nullptr;
 HiPhysicsUPtr g_hiPhysics = nullptr;
-SimBufferPtr g_buffer;
+SimBufferPtr g_buffer = nullptr;
 
 bool g_pause = false;
 bool g_step  = false;
 
+#include "scenes/scene.h"
+std::vector<Scene*> g_scenes;
+uint32_t g_scene;
 // o =========================================================================== o
 // |                                                                             |
 // |                                                                             |
@@ -201,7 +206,29 @@ int main(int argc, const char** argv)
 
     // SimBuffer - initialize Buffer
     g_buffer = SimBuffer::Create();
-    // g_buffer = &SimBuffer::SimBuffer();
+    if(!g_buffer) {
+        SPDLOG_ERROR("failed to create Simulation Buffer");
+        return -1;
+    }
+
+    // Load Scenes
+    // Scene boxCase = BoxDrop("box_drop");
+    // BoxDrop boxCase("box_drop");
+    g_scenes.push_back(new BoxDrop("box_drop")); // 클래스는 포인터인가?
+
+
+    // Init Scene
+    g_scene = 0;
+    g_scenes[g_scene]->Init();
+    SPDLOG_INFO("len : {}", g_buffer->m_positions.size());
+    if (!g_hiPhysics->SetPositions(&g_buffer->m_positions)) {
+        SPDLOG_ERROR("failed to copy simBuffer data to solver.");
+        return -1;
+    }
+    if (!g_hiPhysics->SetVelocities(&g_buffer->m_velocities)) {
+        SPDLOG_ERROR("failed to copy simBuffer data to solver.");
+        return -1;
+    }
 
     // Main Loop
     SPDLOG_INFO("Start main loop");
@@ -216,7 +243,7 @@ int main(int argc, const char** argv)
         if (!g_pause || g_step)
         {
             //some callbacks (upside) that interacts with HiPhysics
-            // g_hiPhysics->UpdateSolver();
+            g_hiPhysics->UpdateSolver();
         
             // g_context->Update(positions);
             //BufferMapping - HiPhysics to opengl Context
@@ -229,9 +256,8 @@ int main(int argc, const char** argv)
             return -1;
         }
         
-
         if (!g_context->UpdateScene(&g_buffer->m_positions)){
-            SPDLOG_ERROR("failed to copy buffer data to context");
+            SPDLOG_ERROR("failed to copy simBuffer data to context");
             return -1;
         }
 

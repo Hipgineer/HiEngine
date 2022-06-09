@@ -16,9 +16,8 @@ set(WINDOW_NAME "HiEngine")
 set(WINDOW_WIDTH 960)
 set(WINDOW_HEIGHT 540)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/scenes)
-
 project(${PROJECT_NAME})
+# include_directories(src/scene)
 add_executable(${PROJECT_NAME} 
     src/main.cpp
     # src/scenes.h
@@ -33,11 +32,24 @@ add_executable(${PROJECT_NAME}
     src/mesh.cpp src/mesh.h
     src/model.cpp src/model.h
     src/simbuffer.cpp src/simbuffer.h
+    # src/scene.h
+    src/scenes/scene.h
     src/HiPhysics/hiphysics.cpp src/HiPhysics/hiphysics.h
     )
 
 include(Dependency.cmake)
 
+# set(SCENE "Scene")
+# add_library(${SCENE} PUBLIC src/scenes/scene.h)
+# target_include_directories(${SCENE} PUBLIC src/scenes/scene.h)
+
+
+# target_link_libraries(${PROJECT_NAME} ${SCENE})
+# target_include_directories(${SCENE} INTERFACE src/scenes/)
+# target_link_libraries(${SCENE} INTERFACE src/scenes/)
+
+# target_include_directories(${PROJECT_NAME} INTERFACE src/scenes/)
+# target_link_libraries(${PROJECT_NAME} INTERFACE src/scenes/)
 # 프로젝트에 include / lib 관련 옵션 추가
 # target_include_directories
 # 타겟의 이름: add_executable(${PROJECT_NAME} src/main.cpp)
@@ -45,7 +57,7 @@ include(Dependency.cmake)
 #             등이 될 수 있다.
 target_include_directories(${PROJECT_NAME} PUBLIC ${DEP_INCLUDE_DIR})
 target_link_directories(${PROJECT_NAME} PUBLIC ${DEP_LIB_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${DEP_LIBS}) # 실제로 사용할 라이브러리 .lib은 지워라
+target_link_libraries(${PROJECT_NAME} PUBLIC ${DEP_LIBS} ${SCENE}) # 실제로 사용할 라이브러리 .lib은 지워라
 target_compile_definitions(${PROJECT_NAME} PUBLIC
     WINDOW_NAME="${WINDOW_NAME}"
     WINDOW_WIDTH=${WINDOW_WIDTH}

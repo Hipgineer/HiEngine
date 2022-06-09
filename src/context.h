@@ -12,14 +12,15 @@
 #include "HiPhysics/hiphysics.h"
 
 CLASS_PTR(Context)
-class Context {
+class Context
+{
 public:
     static ContextUPtr Create();
     // void Update(std::vector<glm::vec3>& positions); // g_solver
-    bool UpdateScene(std::vector<glm::vec3>* positions);
+    bool UpdateScene(std::vector<glm::vec3> *positions);
     void Render();
 
-    void ProcessInput(GLFWwindow* window);
+    void ProcessInput(GLFWwindow *window);
     void MouseMove(double x, double y);
     void MouseButton(int button, int action, double x, double y);
     void MouseWheel(double xoffset, double yoffset);
@@ -48,7 +49,7 @@ private:
     // clear color
     glm::vec4 m_clearColor {glm::vec4(0.1f,0.2f,0.3f,0.0f)};
 
-    // light parameter
+    // light parameters
     struct Light {
         glm::vec3 position { glm::vec3(2.0f,2.0f,2.0f) };
         glm::vec3 direction{glm::vec3(-1.0f, -1.0f, -1.0f)};
@@ -61,7 +62,7 @@ private:
     Light m_light;
     bool m_flashLightMode { false };
 
-    // material parameter
+    // material parameters
     struct Material {
         TextureUPtr diffuse;
         TextureUPtr specular;
@@ -76,6 +77,8 @@ private:
     };
     MaterialBasic m_materialBasic;
 
+
+    // camera parameters
     bool m_cameraControl {false};
     glm::vec2 m_prevMousePos {glm::vec2(0.0f)};
     float m_cameraPitch {0.0f};
