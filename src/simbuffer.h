@@ -21,6 +21,9 @@ public :
 	std::vector<int8_t>     m_phases;
 	std::vector<float>      m_densities;
 
+	float m_radius = 0.01;
+
+
 private :
 };
 

@@ -33,6 +33,7 @@ private:
     ProgramUPtr m_program;
     ProgramUPtr m_simpleProgram;
     ProgramUPtr m_simpleLightingProgram;
+    ProgramUPtr m_pointProgram;
 
     MeshUPtr m_box;
     std::vector<MeshUPtr> m_boxes;

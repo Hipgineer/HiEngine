@@ -30,6 +30,10 @@ bool Context::Init()
     if (!m_program)
         return false;
 
+    m_pointProgram = Program::Create("./shader/simplePoint.vs","./shader/simplePoint.fs");
+    if (!m_pointProgram)
+        return false;
+
     // Initializing
     glClearColor(0.0f, 0.1f, 0.2f, 0.0f); // default background color
 
@@ -125,6 +129,7 @@ void Context::Render()
     // opengl - intialize frame
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_PROGRAM_POINT_SIZE);  
 
     // opengl - render elements
     m_cameraFront =
@@ -180,16 +185,36 @@ void Context::Render()
     // auto models = glm::translate(glm::mat4(1.0), glm::vec3((float)m_timestep*0.01f, 0.0f,0.0f));
 
     // TODO :
-    std::vector<glm::vec3>::iterator ptr;
-    for (ptr = m_positions.begin(); ptr != m_positions.end(); ++ptr)
-    {
-        // cout << *ptr << " ";
-        auto modelTransform = glm::translate(glm::mat4(1.0), *ptr);
-        auto transform = proj * view * modelTransform;
-        m_simpleLightingProgram->SetUniform("transform", transform);
-        m_simpleLightingProgram->SetUniform("modelTransform", modelTransform);
-        m_box->Draw(m_simpleLightingProgram.get());
-    }
+    // - There must be better way to render 
+    //   these many particles simultenuously.
+    //   not through a loop!
+    // std::vector<glm::vec3>::iterator ptr;
+    // for (ptr = m_positions.begin(); ptr != m_positions.end(); ++ptr)
+    // {
+    //     auto modelTransform = glm::translate(glm::mat4(1.0), *ptr);
+    //     auto transform = proj * view * modelTransform;
+    //     m_simpleLightingProgram->SetUniform("transform", transform);
+    //     m_simpleLightingProgram->SetUniform("modelTransform", modelTransform);
+    //     m_box->Draw(m_simpleLightingProgram.get());
+    // }
+
+        auto pointVertexLayout = VertexLayout::Create();
+        auto pointVertexBuffer = Buffer::CreateWithData(
+            GL_ARRAY_BUFFER, GL_STATIC_DRAW,
+            m_positions.data(), sizeof(glm::vec3), m_positions.size());
+        pointVertexLayout->SetAttrib(0, 3, GL_FLOAT, false, sizeof(glm::vec3), 0);
+
+
+        m_pointProgram->Use();
+        m_pointProgram->SetUniform("transform", proj*view);
+        m_pointProgram->SetUniform("modelTransform", view);
+        m_pointProgram->SetUniform("pointRadius", 0.1f);
+        m_pointProgram->SetUniform("pointScale", static_cast<float>(m_width)); 
+        // screenWidth/screenAspect * (1.0f / (tanf(fov*0.5f))))
+        // 2048       / 1.0f        * (1.0f / (tanf(30 degree)) 
+        pointVertexLayout->Bind();
+        glDrawArrays(GL_POINTS, 0, m_positions.size());
+        // glDrawArrays(GL_TRIANGLES, 0, m_positions.size());
 
     if (!m_pause || m_step)
     {

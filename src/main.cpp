@@ -1,7 +1,6 @@
 #include "context.h"
 #include "simbuffer.h"
 #include "HiPhysics/hiphysics.h"
-
 #include <vector>
 #include <spdlog/spdlog.h>
 #include <glad/glad.h> // had to be included before including GLFW
@@ -17,17 +16,19 @@
 // |                                                                             |
 // |                                                                             |
 // o =========================================================================== o
-GLFWwindow* g_window = nullptr;
-ContextUPtr g_context = nullptr;
-HiPhysicsUPtr g_hiPhysics = nullptr;
-SimBufferPtr g_buffer = nullptr;
-
-bool g_pause = false;
-bool g_step  = false;
+GLFWwindow*         g_window = nullptr;
+ContextUPtr         g_context = nullptr;
+HiPhysicsUPtr       g_hiPhysics = nullptr;
+SimBufferPtr        g_buffer = nullptr;
 
 #include "scenes/scene.h"
 std::vector<Scene*> g_scenes;
-uint32_t g_scene;
+uint32_t            g_scene = 0;
+
+bool g_pause = false; // pause update or not
+bool g_step  = false; // update only one step when g_pause = true
+
+
 // o =========================================================================== o
 // |                                                                             |
 // |                                                                             |
@@ -103,8 +104,6 @@ int main(int argc, const char** argv)
 {
     SPDLOG_INFO("START PROGRAM.");
 
-
-
     // o ---------------------------------------------------------------------- o
     // |                      LOAD & INITIALIZE LIBRARIES                       |
     // o ---------------------------------------------------------------------- o
@@ -175,6 +174,7 @@ int main(int argc, const char** argv)
     // o ---------------------------------------------------------------------- o
 
     // class Context - Initialize
+    SPDLOG_INFO("Initialize Context");
     g_context = Context::Create();
     if(!g_context) {
         SPDLOG_ERROR("failed to create context");
@@ -198,6 +198,7 @@ int main(int argc, const char** argv)
     glfwSetScrollCallback(g_window, OnScroll);
 
     // HiPhysics - initialize solver
+    SPDLOG_INFO("Initialize HiPhysics");
     g_hiPhysics = HiPhysics::Create();
     if(!g_hiPhysics) {
         SPDLOG_ERROR("failed to create HiPhysics");
@@ -205,22 +206,22 @@ int main(int argc, const char** argv)
     }
 
     // SimBuffer - initialize Buffer
+    SPDLOG_INFO("Initialize Simulation Buffer");
     g_buffer = SimBuffer::Create();
     if(!g_buffer) {
         SPDLOG_ERROR("failed to create Simulation Buffer");
         return -1;
     }
 
-    // Load Scenes
-    // Scene boxCase = BoxDrop("box_drop");
-    // BoxDrop boxCase("box_drop");
+    // Load All Scenes
     g_scenes.push_back(new BoxDrop("box_drop")); // 클래스는 포인터인가?
 
 
-    // Init Scene
+    // Load Current Scene
     g_scene = 0;
     g_scenes[g_scene]->Init();
-    SPDLOG_INFO("len : {}", g_buffer->m_positions.size());
+
+    // Initialize Scene into hiphysics engine
     if (!g_hiPhysics->SetPositions(&g_buffer->m_positions)) {
         SPDLOG_ERROR("failed to copy simBuffer data to solver.");
         return -1;
@@ -236,18 +237,18 @@ int main(int argc, const char** argv)
         glfwPollEvents(); // collecting events of mouse and keyboard
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        
-        // if (m_sceneChange) Scene::LoadScene(g_hiPhysics);  
 
+        // TODO         
+        // if (g_sceneChange) {
+        //     Scene::LoadScene(g_hiPhysics);  
+        //     g_sceneChange = false;
+        // }
 
         if (!g_pause || g_step)
         {
-            //some callbacks (upside) that interacts with HiPhysics
+            //TODO : some callbacks (upside) that interacts with HiPhysics
             g_hiPhysics->UpdateSolver();
-        
-            // g_context->Update(positions);
-            //BufferMapping - HiPhysics to opengl Context
-
+            //TODO : BufferMapping - HiPhysics to opengl Context
             g_step = false;
         }
         
