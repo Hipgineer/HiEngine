@@ -1,18 +1,19 @@
 #version 330 core
+precision mediump float;
+
 layout (location = 0) in vec3 aPos;
 
 uniform mat4 transform; // MVP matrix
-uniform mat4 modelTransform;
+uniform mat4 viewTransform;
 uniform float pointRadius;
 uniform float pointScale;
 
-out vec4 vertexColor;
+out vec3 vrtPos;
 
 void main() {
-	vec4 viewPos = modelTransform * vec4(aPos, 1.0);
+	vec3 vrtPos = aPos;
+	vec4 viewPosition = viewTransform * vec4(aPos, 1.0);
+
     gl_Position = transform * vec4(aPos, 1.0);
-	// gl_PointSize = pointRadius / gl_Position.z;
-	// gl_PointSize = - pointScale * (pointRadius / viewPos.z);
-	gl_PointSize = - (pointScale * pointRadius / viewPos.z);
-	vertexColor = vec4(0.5, 0.0, 0.0, 1.0);
+	gl_PointSize = - (pointScale * pointRadius / viewPosition.z);
 }

@@ -118,7 +118,9 @@ void Context::Render()
 
         if (ImGui::CollapsingHeader("material", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            ImGui::DragFloat("m.shininess", &m_material.shininess, 1.0f, 1.0f, 256.0f);
+            ImGui::ColorEdit3("m.diffuse", glm::value_ptr(m_materialBasic.diffuse));
+            ImGui::ColorEdit3("m.specular", glm::value_ptr(m_materialBasic.specular));
+            ImGui::DragFloat("m.shininess", &m_materialBasic.shininess, 1.0f, 1.0f, 256.0f);
         }
 
         ImGui::Checkbox("animation", &m_pause);
@@ -132,13 +134,15 @@ void Context::Render()
     glEnable(GL_PROGRAM_POINT_SIZE);  
 
     // opengl - render elements
+    float fov = 45.0f;
+    float aspect = (float)m_width / (float)m_height;
     m_cameraFront =
         glm::rotate(glm::mat4(1.0f), glm::radians(m_cameraYaw), glm::vec3(0.0f, 1.0f, 0.0f)) *
         glm::rotate(glm::mat4(1.0f), glm::radians(m_cameraPitch), glm::vec3(1.0f, 0.0f, 0.0f)) *
         glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
     auto model = glm::rotate(glm::mat4(1.0f), glm::radians((float)m_timestep), glm::vec3(1.0f, 0.5f, 0.0f));
     auto view = glm::lookAt(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
-    auto proj = glm::perspective(glm::radians(45.0f), (float)m_width / (float)m_height, 0.01f, 10.0f);
+    auto proj = glm::perspective(glm::radians(fov), aspect, 0.01f, 10.0f);
 
     glm::vec3 lightPos = m_light.position;
     glm::vec3 lightDir = m_light.direction;
@@ -157,61 +161,38 @@ void Context::Render()
         m_box->Draw(m_simpleProgram.get());
     }
 
-    m_simpleLightingProgram->Use();
-    m_simpleLightingProgram->SetUniform("viewPos", m_cameraPos);
-    m_simpleLightingProgram->SetUniform("light.position", lightPos);
-    m_simpleLightingProgram->SetUniform("light.direction", lightDir);
-    m_simpleLightingProgram->SetUniform("light.cutoff", glm::vec2(
-                                                            cosf(glm::radians(m_light.cutoff[0])),
-                                                            cosf(glm::radians(m_light.cutoff[0] + m_light.cutoff[1]))));
-    m_simpleLightingProgram->SetUniform("light.attenuation", GetAttenuationCoeff(m_light.distance));
-    m_simpleLightingProgram->SetUniform("light.ambient", m_light.ambient);
-    m_simpleLightingProgram->SetUniform("light.diffuse", m_light.diffuse);
-    m_simpleLightingProgram->SetUniform("light.specular", m_light.specular);
-
-    m_simpleLightingProgram->SetUniform("material.diffuse", m_materialBasic.diffuse);
-    m_simpleLightingProgram->SetUniform("material.specular", m_materialBasic.specular);
-    m_simpleLightingProgram->SetUniform("material.shininess", m_materialBasic.shininess);
-
-    // m_program->SetUniform("material.diffuse", 0);
-    // m_program->SetUniform("material.specular", 1);
-    // m_program->SetUniform("material.shininess", m_material.shininess);
-    // glActiveTexture(GL_TEXTURE0);
-    // m_material.diffuse->Bind();
-    // glActiveTexture(GL_TEXTURE1);
-    // m_material.specular->Bind();
-
-    // auto modelTransform = glm::translate(glm::mat4(1.0), glm::vec3((float)m_timestep*0.01f, 0.0f,0.0f));
-    // auto models = glm::translate(glm::mat4(1.0), glm::vec3((float)m_timestep*0.01f, 0.0f,0.0f));
-
-    // TODO :
-    // - There must be better way to render 
-    //   these many particles simultenuously.
-    //   not through a loop!
-    // std::vector<glm::vec3>::iterator ptr;
-    // for (ptr = m_positions.begin(); ptr != m_positions.end(); ++ptr)
-    // {
-    //     auto modelTransform = glm::translate(glm::mat4(1.0), *ptr);
-    //     auto transform = proj * view * modelTransform;
-    //     m_simpleLightingProgram->SetUniform("transform", transform);
-    //     m_simpleLightingProgram->SetUniform("modelTransform", modelTransform);
-    //     m_box->Draw(m_simpleLightingProgram.get());
-    // }
-
+        // linking Point shader buffers
         auto pointVertexLayout = VertexLayout::Create();
         auto pointVertexBuffer = Buffer::CreateWithData(
             GL_ARRAY_BUFFER, GL_STATIC_DRAW,
             m_positions.data(), sizeof(glm::vec3), m_positions.size());
         pointVertexLayout->SetAttrib(0, 3, GL_FLOAT, false, sizeof(glm::vec3), 0);
 
-
+        auto pointTransform =  glm::rotate(glm::mat4(1.0f), glm::radians(m_cameraYaw), glm::vec3(0.0f, 1.0f, 0.0f)) *
+                                glm::rotate(glm::mat4(1.0f), glm::radians(m_cameraPitch), glm::vec3(1.0f, 0.0f, 0.0f)) ;
         m_pointProgram->Use();
         m_pointProgram->SetUniform("transform", proj*view);
-        m_pointProgram->SetUniform("modelTransform", view);
-        m_pointProgram->SetUniform("pointRadius", 0.1f);
-        m_pointProgram->SetUniform("pointScale", static_cast<float>(m_width)); 
+        m_pointProgram->SetUniform("viewTransform", view);
+        m_pointProgram->SetUniform("pointTransform", pointTransform);
+        m_pointProgram->SetUniform("pointRadius", 0.05f);
+        // m_pointProgram->SetUniform("pointScale", static_cast<float>(m_width)); 
+        m_pointProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f)))); 
         // screenWidth/screenAspect * (1.0f / (tanf(fov*0.5f))))
         // 2048       / 1.0f        * (1.0f / (tanf(30 degree)) 
+        m_pointProgram->SetUniform("cameraPos", m_cameraPos);
+        m_pointProgram->SetUniform("light.position", lightPos);
+        m_pointProgram->SetUniform("light.direction", lightDir);
+        m_pointProgram->SetUniform("light.cutoff", glm::vec2(   cosf(glm::radians(m_light.cutoff[0])),
+                                                                cosf(glm::radians(m_light.cutoff[0] + m_light.cutoff[1]))));
+        m_pointProgram->SetUniform("light.attenuation", GetAttenuationCoeff(m_light.distance));
+        m_pointProgram->SetUniform("light.ambient", m_light.ambient);
+        m_pointProgram->SetUniform("light.diffuse", m_light.diffuse);
+        m_pointProgram->SetUniform("light.specular", m_light.specular);
+
+        m_pointProgram->SetUniform("material.diffuse", m_materialBasic.diffuse);
+        m_pointProgram->SetUniform("material.specular", m_materialBasic.specular);
+        m_pointProgram->SetUniform("material.shininess", m_materialBasic.shininess);
+
         pointVertexLayout->Bind();
         glDrawArrays(GL_POINTS, 0, m_positions.size());
         // glDrawArrays(GL_TRIANGLES, 0, m_positions.size());
