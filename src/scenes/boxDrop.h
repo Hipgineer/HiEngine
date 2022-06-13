@@ -13,6 +13,8 @@ public :
         // int64_t const initParticleNumber = voxelizer->CreateParticles(&g_buffer->m_positions);
 
         g_buffer->m_radius = 0.1;      
+
+        // Box Generate
         int32_t xNum = 10;
         int32_t yNum = 10;
         int32_t zNum = 10;

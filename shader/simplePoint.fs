@@ -66,5 +66,4 @@ void main() {
     result *= attenuation;
 
     fragColor = vec4(result, 1.0);
-    // fragColor = vec4(vrtPos, 1.0);
 }
