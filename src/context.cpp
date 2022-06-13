@@ -168,8 +168,8 @@ void Context::Render()
             m_positions.data(), sizeof(glm::vec3), m_positions.size());
         pointVertexLayout->SetAttrib(0, 3, GL_FLOAT, false, sizeof(glm::vec3), 0);
 
-        auto pointTransform =  glm::rotate(glm::mat4(1.0f), glm::radians(m_cameraYaw), glm::vec3(0.0f, 1.0f, 0.0f)) *
-                                glm::rotate(glm::mat4(1.0f), glm::radians(m_cameraPitch), glm::vec3(1.0f, 0.0f, 0.0f)) ;
+        auto pointTransform =  - glm::rotate(glm::mat4(1.0f), glm::radians(-m_cameraPitch/2.0f), glm::vec3(1.0f, 0.0f, 0.0f)) *
+                                 glm::rotate(glm::mat4(1.0f), glm::radians(-m_cameraYaw/2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         m_pointProgram->Use();
         m_pointProgram->SetUniform("transform", proj*view);
         m_pointProgram->SetUniform("viewTransform", view);

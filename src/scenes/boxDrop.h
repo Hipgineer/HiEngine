@@ -6,7 +6,6 @@ public :
 	virtual void Init()
     {
         SPDLOG_INFO("BoxDrop Initializing");
-
         // TODO: read obj file
 
         // TODO: Voxelize 3d object to make particles
@@ -28,8 +27,5 @@ public :
                     g_buffer->m_positions.push_back(glm::vec3(ii*g_buffer->m_radius, jj*g_buffer->m_radius, kk*g_buffer->m_radius));
                     g_buffer->m_velocities.push_back(glm::vec3(0.0, 0.0, 0.0));
                 }
-        // g_buffer->m_velocities.push_back(glm::vec3(0.1f, 0.0f, 0.0f));
-        // g_buffer->m_velocities.push_back(glm::vec3(0.1f, 0.1f, 0.0f));
-        // g_buffer->m_velocities.push_back(glm::vec3(0.1f, 0.2f, 0.0f));
     }
 };

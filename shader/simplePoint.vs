@@ -11,7 +11,7 @@ uniform float pointScale;
 out vec3 vrtPos;
 
 void main() {
-	vec3 vrtPos = aPos;
+	vrtPos = aPos;
 	vec4 viewPosition = viewTransform * vec4(aPos, 1.0);
 
     gl_Position = transform * vec4(aPos, 1.0);
