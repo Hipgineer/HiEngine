@@ -222,6 +222,10 @@ int main(int argc, const char** argv)
     g_scenes[g_scene]->Init();
 
     // Initialize Scene into hiphysics engine
+    if (!g_hiPhysics->SetDeviceMemory(g_buffer)){
+        SPDLOG_ERROR("CUDA : failed to copy host to device.");
+        return -1;
+    }
     if (!g_hiPhysics->SetPositions(&g_buffer->m_positions)) {
         SPDLOG_ERROR("failed to copy simBuffer data to solver.");
         return -1;

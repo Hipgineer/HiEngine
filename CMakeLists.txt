@@ -16,11 +16,10 @@ set(WINDOW_NAME "HiEngine")
 set(WINDOW_WIDTH 960)
 set(WINDOW_HEIGHT 540)
 
-project(${PROJECT_NAME})
+project(${PROJECT_NAME} LANGUAGES CXX CUDA)
 # include_directories(src/scene)
 add_executable(${PROJECT_NAME} 
     src/main.cpp
-    # src/scenes.h
     src/common.cpp src/common.h
     src/shader.cpp src/shader.h
     src/program.cpp src/program.h
@@ -32,9 +31,8 @@ add_executable(${PROJECT_NAME}
     src/mesh.cpp src/mesh.h
     src/model.cpp src/model.h
     src/simbuffer.cpp src/simbuffer.h
-    # src/scene.h
     src/scenes/scene.h
-    src/HiPhysics/hiphysics.cpp src/HiPhysics/hiphysics.h
+    src/HiPhysics/hiphysics.cu src/HiPhysics/hiphysics.h
     )
 
 include(Dependency.cmake)
@@ -55,6 +53,8 @@ include(Dependency.cmake)
 # 타겟의 이름: add_executable(${PROJECT_NAME} src/main.cpp)
 #             spdlog
 #             등이 될 수 있다.
+
+set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 target_include_directories(${PROJECT_NAME} PUBLIC ${DEP_INCLUDE_DIR})
 target_link_directories(${PROJECT_NAME} PUBLIC ${DEP_LIB_DIR})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${DEP_LIBS} ${SCENE}) # 실제로 사용할 라이브러리 .lib은 지워라
