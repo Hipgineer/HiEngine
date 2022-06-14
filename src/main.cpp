@@ -25,7 +25,7 @@ SimBufferPtr        g_buffer = nullptr;
 std::vector<Scene*> g_scenes;
 uint32_t            g_scene = 0;
 
-bool g_pause = false; // pause update or not
+bool g_pause = true; // pause update or not
 bool g_step  = false; // update only one step when g_pause = true
 
 
@@ -220,12 +220,15 @@ int main(int argc, const char** argv)
     // Load Current Scene
     g_scene = 0;
     g_scenes[g_scene]->Init();
+    
+    SPDLOG_INFO("init number of particles : {}", g_buffer->GetNumParticles());
 
     // Initialize Scene into hiphysics engine
     if (!g_hiPhysics->SetDeviceMemory(g_buffer)){
         SPDLOG_ERROR("CUDA : failed to copy host to device.");
         return -1;
     }
+    SPDLOG_INFO("memcpy.. number of particles : {}", g_buffer->GetNumParticles());
     if (!g_hiPhysics->SetPositions(&g_buffer->m_positions)) {
         SPDLOG_ERROR("failed to copy simBuffer data to solver.");
         return -1;
@@ -248,18 +251,31 @@ int main(int argc, const char** argv)
         //     g_sceneChange = false;
         // }
 
+        // if (!g_pause || g_step)
+        // {
+        //     //TODO : some callbacks (upside) that interacts with HiPhysics
+        //     g_hiPhysics->UpdateSolver();
+        //     //TODO : BufferMapping - HiPhysics to opengl Context
+        //     g_step = false;
+        // }
+        // if (!g_hiPhysics->GetPositions(&g_buffer->m_positions)) {
+        //     SPDLOG_ERROR("failed to copy solver data to simBuffer.");
+        //     return -1;
+        // }
+        
         if (!g_pause || g_step)
         {
             //TODO : some callbacks (upside) that interacts with HiPhysics
-            g_hiPhysics->UpdateSolver();
+            g_hiPhysics->UpdateDeviceSolver(g_buffer->GetNumParticles());
             //TODO : BufferMapping - HiPhysics to opengl Context
             g_step = false;
         }
-        
-        if (!g_hiPhysics->GetPositions(&g_buffer->m_positions)) {
-            SPDLOG_ERROR("failed to copy solver data to simBuffer.");
+
+        if (!g_hiPhysics->GetDeviceMemory(g_buffer)){
+            SPDLOG_ERROR("CUDA : failed to copy device to host.");
             return -1;
         }
+        // SPDLOG_INFO("in main loop.. number of particles : {}", g_buffer->GetNumParticles());
         
         if (!g_context->UpdateScene(&g_buffer->m_positions)){
             SPDLOG_ERROR("failed to copy simBuffer data to context");

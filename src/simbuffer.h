@@ -10,6 +10,7 @@ class SimBuffer
 {
 public :
 	static SimBufferPtr Create();
+	int64_t GetNumParticles() { return m_positions.size(); }
 
 private :
     SimBuffer() {};
