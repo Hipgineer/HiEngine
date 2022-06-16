@@ -24,7 +24,7 @@ private :
 public :
 	std::vector<glm::vec3>  m_positions;
 	std::vector<glm::vec3>  m_velocities;
-	std::vector<int8_t>     m_phases;
+	std::vector<int32_t>    m_phases;
 	std::vector<float>      m_densities;
 
 	CommonParameters m_commonParam;

@@ -15,6 +15,7 @@ bool Context::Init()
 
     // m_box = Mesh::CreateSphere(10, 10, 0.05f);
     m_box = Mesh::CreateBox(glm::vec3(-0.01f,-0.01f,-0.01f),glm::vec3(0.01f,0.01f,0.01f));
+    
     m_model = Model::Load("./models/backpack/backpack.obj");
     if (!m_model)
         return false;

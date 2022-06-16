@@ -227,7 +227,7 @@ int main(int argc, const char** argv)
     SPDLOG_INFO("init number of particles : {}", g_buffer->GetNumParticles());
 
     // Initialize Scene into hiphysics engine
-    if (!g_hiPhysics->SetDeviceMemory(g_buffer)){
+    if (!g_hiPhysics->SetMemory(g_buffer)){
         SPDLOG_ERROR("CUDA : failed to copy host to device.");
         return -1;
     }
@@ -258,16 +258,16 @@ int main(int argc, const char** argv)
         
         if (!g_pause || g_step)
         {
-            g_hiPhysics->UpdateDeviceSolver(g_buffer);
+            g_hiPhysics->UpdateSolver(g_buffer);
             g_step = false;
         }
 
-        if (!g_hiPhysics->GetDeviceMemory(g_buffer)){
+        if (!g_hiPhysics->GetMemory(g_buffer)){
             SPDLOG_ERROR("CUDA : failed to copy device to host.");
             return -1;
         }
         
-        //TODO : BufferMapping - HiPhysics to opengl Context
+        //TODO : BufferMapping - directly mapping opengl to HiPhysics data pointer? 
         // - https://stackoverflow.com/questions/23968591/how-to-access-data-on-cuda-by-opengl
         //   - Somebody tried to do it.
 
