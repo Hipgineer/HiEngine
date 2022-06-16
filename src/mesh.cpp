@@ -82,6 +82,52 @@ MeshUPtr Mesh::CreateBox() {
         20, 22, 21, 22, 20, 23,
     };
 
+    // return Create(vertices, indices, GL_TRIANGLES);
+    return CreateBox(glm::vec3(-0.5f,-0.5f,-0.5f), glm::vec3(0.5f,0.5f,0.5f));
+}
+
+MeshUPtr Mesh::CreateBox(glm::vec3 minPoint, glm::vec3 maxPoint) {
+    std::vector<Vertex> vertices = {
+        Vertex { glm::vec3(minPoint.x, minPoint.y, minPoint.z), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(0.0f, 0.0f) },
+        Vertex { glm::vec3(maxPoint.x, minPoint.y, minPoint.z), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(1.0f, 0.0f) },
+        Vertex { glm::vec3(maxPoint.x, maxPoint.y, minPoint.z), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(1.0f, 1.0f) },
+        Vertex { glm::vec3(minPoint.x, maxPoint.y, minPoint.z), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(0.0f, 1.0f) },
+
+        Vertex { glm::vec3(minPoint.x, minPoint.y, maxPoint.z), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(0.0f, 0.0f) },
+        Vertex { glm::vec3(maxPoint.x, minPoint.y, maxPoint.z), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(1.0f, 0.0f) },
+        Vertex { glm::vec3(maxPoint.x, maxPoint.y, maxPoint.z), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(1.0f, 1.0f) },
+        Vertex { glm::vec3(minPoint.x, maxPoint.y, maxPoint.z), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(0.0f, 1.0f) },
+
+        Vertex { glm::vec3(minPoint.x, maxPoint.y, maxPoint.z), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f) },
+        Vertex { glm::vec3(minPoint.x, maxPoint.y, minPoint.z), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f) },
+        Vertex { glm::vec3(minPoint.x, minPoint.y, minPoint.z), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f) },
+        Vertex { glm::vec3(minPoint.x, minPoint.y, maxPoint.z), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f) },
+
+        Vertex { glm::vec3(maxPoint.x, maxPoint.y, maxPoint.z), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f) },
+        Vertex { glm::vec3(maxPoint.x, maxPoint.y, minPoint.z), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f) },
+        Vertex { glm::vec3(maxPoint.x, minPoint.y, minPoint.z), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f) },
+        Vertex { glm::vec3(maxPoint.x, minPoint.y, maxPoint.z), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f) },
+
+        Vertex { glm::vec3(minPoint.x, minPoint.y, minPoint.z), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(0.0f, 1.0f) },
+        Vertex { glm::vec3(maxPoint.x, minPoint.y, minPoint.z), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(1.0f, 1.0f) },
+        Vertex { glm::vec3(maxPoint.x, minPoint.y, maxPoint.z), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(1.0f, 0.0f) },
+        Vertex { glm::vec3(minPoint.x, minPoint.y, maxPoint.z), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(0.0f, 0.0f) },
+
+        Vertex { glm::vec3(minPoint.x, maxPoint.y, minPoint.z), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 1.0f) },
+        Vertex { glm::vec3(maxPoint.x, maxPoint.y, minPoint.z), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 1.0f) },
+        Vertex { glm::vec3(maxPoint.x, maxPoint.y, maxPoint.z), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 0.0f) },
+        Vertex { glm::vec3(minPoint.x, maxPoint.y, maxPoint.z), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 0.0f) },
+    };
+
+    std::vector<uint32_t> indices = {
+        0,  2,  1,  2,  0,  3,
+        4,  5,  6,  6,  7,  4,
+        8,  9, 10, 10, 11,  8,
+        12, 14, 13, 14, 12, 15,
+        16, 17, 18, 18, 19, 16,
+        20, 22, 21, 22, 20, 23,
+    };
+
     return Create(vertices, indices, GL_TRIANGLES);
 }
 
@@ -139,12 +185,6 @@ MeshUPtr Mesh::CreateSphere(int8_t slices = 20, int8_t segments = 20, float radi
     return Create(vertices, indices, GL_TRIANGLES);
 }
 
-
-// MeshUPtr Mesh::CreateSpheres(int8_t slices = 20, int8_t segments = 20, float radius = 1, glm::vec3) {
-    
-//     MeshUPtr aSphere = CreateSphere(slices, segments, radius);
-//     return Create(vertices, indices, GL_TRIANGLES);
-// }
 
 void Material::SetToProgram(const Program* program) const {
     int textureCount = 0;
