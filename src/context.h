@@ -4,6 +4,7 @@
 #include "common.h"
 #include "shader.h"
 #include "program.h"
+#include "simbuffer.h"
 #include "buffer.h"
 #include "vertex_layout.h"
 #include "texture.h"
@@ -43,10 +44,6 @@ private:
     
     // animation
 
-    int m_timestep = 0; // will be redefinded as global variable, check main loop.
-    bool m_pause = false; // will be redefinded as global variable, check main loop.
-    bool m_step = false; //will be redefinded as global variable, check main loop.
-
     // clear color
     glm::vec4 m_clearColor {glm::vec4(0.1f,0.2f,0.3f,0.0f)};
 
@@ -72,14 +69,15 @@ private:
     Material m_material;
     
     struct MaterialBasic {
-        glm::vec3 diffuse { glm::vec3(0.5f, 0.5f, 0.5f) };
-        glm::vec3 specular { glm::vec3(1.0f, 1.0f, 1.0f) };
+        glm::vec3 diffuse { glm::vec3(0.4f, 0.8f, 0.8f) };
+        glm::vec3 specular { glm::vec3(0.0f, 0.0f, 0.0f) };
         float shininess { 32.0f };
     };
     MaterialBasic m_materialBasic;
 
 
     // camera parameters
+    float m_cameraSpeedRatio {1.0f};
     bool m_cameraControl {false};
     glm::vec2 m_prevMousePos {glm::vec2(0.0f)};
     float m_cameraPitch {0.0f};
@@ -88,7 +86,9 @@ private:
     glm::vec3 m_cameraFront { glm::vec3(0.0f,0.0f,-1.0f)};
     glm::vec3 m_cameraUp { glm::vec3(0.0f,1.0f,0.0f)};
 
-    std::vector<glm::vec3> m_positions;
+    
+    // std::shared_ptr<std::vector<glm::vec3>> m_positions; 
+    std::vector<glm::vec3> * m_positions;
 
     int m_width {WINDOW_WIDTH};
     int m_height {WINDOW_HEIGHT};

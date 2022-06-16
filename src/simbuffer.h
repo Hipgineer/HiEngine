@@ -4,6 +4,11 @@
 #include "common.h"
 
 uint64_t const maxParticle = 1'000'000;
+struct CommonParameters {
+	float radius;
+	float dt;
+	CommonParameters() : radius(0.1f), dt(0.1f) {};
+};
 
 CLASS_PTR(SimBuffer);
 class SimBuffer
@@ -22,7 +27,7 @@ public :
 	std::vector<int8_t>     m_phases;
 	std::vector<float>      m_densities;
 
-	float m_radius = 0.01;
+	CommonParameters m_commonParam;
 
 
 private :

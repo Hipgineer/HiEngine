@@ -33,6 +33,7 @@ add_executable(${PROJECT_NAME}
     src/simbuffer.cpp src/simbuffer.h
     src/scenes/scene.h
     src/HiPhysics/hiphysics.cu src/HiPhysics/hiphysics.h
+    src/HiPhysics/hiphysicsPBD.cu src/HiPhysics/hiphysicsPBD.h
     )
 
 include(Dependency.cmake)

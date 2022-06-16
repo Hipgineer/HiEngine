@@ -28,6 +28,8 @@ uint32_t            g_scene = 0;
 bool g_pause = true; // pause update or not
 bool g_step  = false; // update only one step when g_pause = true
 
+// common variables
+
 
 // o =========================================================================== o
 // |                                                                             |
@@ -89,6 +91,7 @@ void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
     }
     
     context->PressKey(key, scancode, action, mods);
+
     if (key == GLFW_KEY_P && action == GLFW_PRESS) g_pause = !g_pause;
     if (key == GLFW_KEY_O && (action == GLFW_PRESS || action == GLFW_REPEAT)) g_step  = true;
 }
@@ -214,7 +217,7 @@ int main(int argc, const char** argv)
     }
 
     // Load All Scenes
-    g_scenes.push_back(new BoxDrop("box_drop")); // 클래스는 포인터인가?
+    g_scenes.push_back(new BoxDrop("box_drop")); // new로 생성된 클래스는 포인터인가?
 
 
     // Load Current Scene
@@ -228,13 +231,9 @@ int main(int argc, const char** argv)
         SPDLOG_ERROR("CUDA : failed to copy host to device.");
         return -1;
     }
-    SPDLOG_INFO("memcpy.. number of particles : {}", g_buffer->GetNumParticles());
-    if (!g_hiPhysics->SetPositions(&g_buffer->m_positions)) {
-        SPDLOG_ERROR("failed to copy simBuffer data to solver.");
-        return -1;
-    }
-    if (!g_hiPhysics->SetVelocities(&g_buffer->m_velocities)) {
-        SPDLOG_ERROR("failed to copy simBuffer data to solver.");
+    
+    if (!g_context->UpdateScene(&g_buffer->m_positions)){
+        SPDLOG_ERROR("failed to copy simBuffer data to context");
         return -1;
     }
 
@@ -245,29 +244,21 @@ int main(int argc, const char** argv)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // TODO         
+        // TODO : Relaod the Scene when changed
         // if (g_sceneChange) {
         //     Scene::LoadScene(g_hiPhysics);  
         //     g_sceneChange = false;
         // }
 
-        // if (!g_pause || g_step)
+        //TODO : interactive callbacks with HiPhysics
+        // if (!g_callback)
         // {
-        //     //TODO : some callbacks (upside) that interacts with HiPhysics
-        //     g_hiPhysics->UpdateSolver();
-        //     //TODO : BufferMapping - HiPhysics to opengl Context
-        //     g_step = false;
-        // }
-        // if (!g_hiPhysics->GetPositions(&g_buffer->m_positions)) {
-        //     SPDLOG_ERROR("failed to copy solver data to simBuffer.");
-        //     return -1;
+        //     g_hiPhysics->SetDeviceMemory(g_buffer, idx);
         // }
         
         if (!g_pause || g_step)
         {
-            //TODO : some callbacks (upside) that interacts with HiPhysics
-            g_hiPhysics->UpdateDeviceSolver(g_buffer->GetNumParticles());
-            //TODO : BufferMapping - HiPhysics to opengl Context
+            g_hiPhysics->UpdateDeviceSolver(g_buffer);
             g_step = false;
         }
 
@@ -275,14 +266,12 @@ int main(int argc, const char** argv)
             SPDLOG_ERROR("CUDA : failed to copy device to host.");
             return -1;
         }
-        // SPDLOG_INFO("in main loop.. number of particles : {}", g_buffer->GetNumParticles());
         
-        if (!g_context->UpdateScene(&g_buffer->m_positions)){
-            SPDLOG_ERROR("failed to copy simBuffer data to context");
-            return -1;
-        }
+        //TODO : BufferMapping - HiPhysics to opengl Context
+        // - https://stackoverflow.com/questions/23968591/how-to-access-data-on-cuda-by-opengl
+        //   - Somebody tried to do it.
 
-        g_context->ProcessInput(g_window); //for every signal (ex. cameramoving)
+        g_context->ProcessInput(g_window);
         g_context->Render();
         
         ImGui::Render(); // Prepare the data for rendering so you can call GetDrawData()
