@@ -15,11 +15,14 @@ bool Context::Init()
 
     // m_box = Mesh::CreateSphere(10, 10, 0.05f);
     m_box = Mesh::CreateBox(glm::vec3(-0.01f,-0.01f,-0.01f),glm::vec3(0.01f,0.01f,0.01f));
-    
+
+    // m_points = Points::Create();
+
     m_model = Model::Load("./models/backpack/backpack.obj");
     if (!m_model)
         return false;
 
+    // Loading Programs
     m_simpleProgram = Program::Create("./shader/simple.vs", "./shader/simple.fs");
     if (!m_simpleProgram)
         return false;
@@ -36,7 +39,7 @@ bool Context::Init()
     if (!m_pointProgram)
         return false;
 
-    // Initializing
+    // Initializing openGL Scene
     glClearColor(0.0f, 0.1f, 0.2f, 0.0f); // default background color
 
     // Loading Texture Images
@@ -65,6 +68,7 @@ bool Context::Init()
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_texture->Get());
+
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, m_texture2->Get());
 
@@ -75,9 +79,11 @@ bool Context::Init()
     return true;
 }
 
-bool Context::UpdateScene(std::vector<glm::vec3> *positions)
+bool Context::MapSimBuffer(SimBufferPtr simBuffer)
 {
-    m_positions = positions; 
+    // Copy Address
+    m_positions = &simBuffer->m_positions; 
+    m_colors = &simBuffer->m_densities; 
     return true;
     // uint64_t count = (int)(positions->size());
     // if (count)
@@ -165,11 +171,17 @@ void Context::Render()
 
     // TODO : Refactoring Like m_box
     // linking Point shader buffers
+
     auto pointVertexLayout = VertexLayout::Create();
     auto pointVertexBuffer = Buffer::CreateWithData(
         GL_ARRAY_BUFFER, GL_STATIC_DRAW,
         m_positions->data(), sizeof(glm::vec3), m_positions->size());
     pointVertexLayout->SetAttrib(0, 3, GL_FLOAT, false, sizeof(glm::vec3), 0);
+    // TODO : m_colors need to be normalized. or Set Uniform value the min/max values.
+    auto pointVertexBuffer2 = Buffer::CreateWithData(
+        GL_ARRAY_BUFFER, GL_STATIC_DRAW,
+        m_colors->data(), sizeof(float), m_colors->size());
+    pointVertexLayout->SetAttrib(1, 1, GL_FLOAT, false, sizeof(float), 0);
 
     auto pointTransform =  - glm::rotate(glm::mat4(1.0f), glm::radians(-m_cameraPitch/2.0f), glm::vec3(1.0f, 0.0f, 0.0f)) *
                             glm::rotate(glm::mat4(1.0f), glm::radians(-m_cameraYaw/2.0f), glm::vec3(0.0f, 1.0f, 0.0f));

@@ -131,7 +131,6 @@ MeshUPtr Mesh::CreateBox(glm::vec3 minPoint, glm::vec3 maxPoint) {
     return Create(vertices, indices, GL_TRIANGLES);
 }
 
-
 MeshUPtr Mesh::CreateSphere(int8_t slices = 20, int8_t segments = 20, float radius = 1) {
     
     std::vector<Vertex> vertices;
@@ -184,7 +183,6 @@ MeshUPtr Mesh::CreateSphere(int8_t slices = 20, int8_t segments = 20, float radi
 
     return Create(vertices, indices, GL_TRIANGLES);
 }
-
 
 void Material::SetToProgram(const Program* program) const {
     int textureCount = 0;

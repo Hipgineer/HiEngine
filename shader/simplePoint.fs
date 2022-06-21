@@ -25,6 +25,7 @@ struct Material {
 uniform Material material;
 
 in vec3 vrtPos;
+in vec3 vrtColor;
 out vec4 fragColor;
 
 void main() {
@@ -41,7 +42,7 @@ void main() {
 
     // Light Interactions
     vec3 ambient = material.diffuse * light.ambient;
-    vec3 result = ambient;
+    vec3 result = vrtColor;
     
     // Intensity according to distance to object from light.
     float dist = length(light.position - vrtPos);

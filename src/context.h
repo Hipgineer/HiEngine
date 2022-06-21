@@ -18,7 +18,7 @@ class Context
 public:
     static ContextUPtr Create();
     // void Update(std::vector<glm::vec3>& positions); // g_solver
-    bool UpdateScene(std::vector<glm::vec3> *positions);
+    bool MapSimBuffer(SimBufferPtr simBuffer);
     void Render();
 
     void ProcessInput(GLFWwindow *window);
@@ -89,6 +89,7 @@ private:
     
     // std::shared_ptr<std::vector<glm::vec3>> m_positions; 
     std::vector<glm::vec3> * m_positions;
+    std::vector<float> * m_colors;
 
     int m_width {WINDOW_WIDTH};
     int m_height {WINDOW_HEIGHT};

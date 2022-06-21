@@ -25,6 +25,7 @@ public :
         g_buffer->m_positions.reserve(initParticleNumber);
         g_buffer->m_velocities.reserve(initParticleNumber);
         g_buffer->m_phases.reserve(initParticleNumber);
+        g_buffer->m_densities.reserve(initParticleNumber);
 
         for (int32_t ii = 0 ; ii < xNum ; ++ii)
             for (int32_t jj = 0 ; jj < yNum ; ++jj)
@@ -33,6 +34,7 @@ public :
                     g_buffer->m_positions.push_back(glm::vec3(ii*g_buffer->m_commonParam.radius, jj*g_buffer->m_commonParam.radius, kk*g_buffer->m_commonParam.radius));
                     g_buffer->m_velocities.push_back(glm::vec3(0.01, 0.0, 0.0));
                     g_buffer->m_phases.push_back(0);
+                    g_buffer->m_densities.push_back(static_cast<float>(jj)*0.1);
                 }
     }
 };

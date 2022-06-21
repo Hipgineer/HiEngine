@@ -232,7 +232,7 @@ int main(int argc, const char** argv)
         return -1;
     }
     
-    if (!g_context->UpdateScene(&g_buffer->m_positions)){
+    if (!g_context->MapSimBuffer(g_buffer)){
         SPDLOG_ERROR("failed to copy simBuffer data to context");
         return -1;
     }
