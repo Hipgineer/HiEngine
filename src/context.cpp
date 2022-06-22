@@ -84,6 +84,7 @@ bool Context::MapSimBuffer(SimBufferPtr simBuffer)
     // Copy Address
     m_positions = &simBuffer->m_positions; 
     m_colors = &simBuffer->m_densities; 
+    m_commonParam = &simBuffer->m_commonParam;
     return true;
     // uint64_t count = (int)(positions->size());
     // if (count)
@@ -189,8 +190,10 @@ void Context::Render()
     m_pointProgram->SetUniform("transform", proj*view);
     m_pointProgram->SetUniform("viewTransform", view);
     m_pointProgram->SetUniform("pointTransform", pointTransform);
-    m_pointProgram->SetUniform("pointRadius", 0.005f); // TODO: Particle Size from buffer
+    m_pointProgram->SetUniform("pointRadius", m_commonParam->radius);
     m_pointProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f)))); 
+    m_pointProgram->SetUniform("colorMax", *std::max_element(m_colors->begin(), m_colors->end()));
+    m_pointProgram->SetUniform("colorMin", *std::min_element(m_colors->begin(), m_colors->end()));
     m_pointProgram->SetUniform("cameraPos", m_cameraPos);
     m_pointProgram->SetUniform("light.position", lightPos);
     m_pointProgram->SetUniform("light.direction", lightDir);

@@ -14,7 +14,7 @@ public :
         // ex) 
         // int64_t const initParticleNumber = voxelizer->CreateParticles(&g_buffer->m_positions);
  
-        g_buffer->m_commonParam.radius  = 0.01;      
+        g_buffer->m_commonParam.radius  = 0.1;      
         g_buffer->m_commonParam.dt      = 0.001;      
 
         // Box Generate
@@ -31,10 +31,10 @@ public :
             for (int32_t jj = 0 ; jj < yNum ; ++jj)
                 for (int32_t kk = 0 ; kk < zNum ; ++kk)
                 {
-                    g_buffer->m_positions.push_back(glm::vec3(ii*g_buffer->m_commonParam.radius, jj*g_buffer->m_commonParam.radius, kk*g_buffer->m_commonParam.radius));
+                    g_buffer->m_positions.push_back(glm::vec3(2*ii*g_buffer->m_commonParam.radius, 2*jj*g_buffer->m_commonParam.radius, 2*kk*g_buffer->m_commonParam.radius));
                     g_buffer->m_velocities.push_back(glm::vec3(0.01, 0.0, 0.0));
                     g_buffer->m_phases.push_back(0);
-                    g_buffer->m_densities.push_back(static_cast<float>(jj)*0.1);
+                    g_buffer->m_densities.push_back(static_cast<float>(jj));
                 }
     }
 };

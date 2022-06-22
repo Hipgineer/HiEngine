@@ -8,6 +8,8 @@ uniform mat4 transform; // MVP matrix
 uniform mat4 viewTransform;
 uniform float pointRadius;
 uniform float pointScale;
+uniform float colorMax;
+uniform float colorMin;
 
 out vec3 vrtPos;
 out vec3 vrtColor;
@@ -20,5 +22,5 @@ void main() {
 	gl_PointSize = - (pointScale * pointRadius / viewPosition.z);
 
 	// density visualization
-	vrtColor = mix(vec3(1.0,0.0,0.0), vec3(0.0,0.0,1.0),  aColor);
+	vrtColor = mix(vec3(1.0,0.0,0.0), vec3(0.0,0.0,1.0),  (aColor-colorMin)/(colorMax-colorMin));
 }

@@ -90,6 +90,7 @@ private:
     // std::shared_ptr<std::vector<glm::vec3>> m_positions; 
     std::vector<glm::vec3> * m_positions;
     std::vector<float> * m_colors;
+    CommonParameters * m_commonParam;
 
     int m_width {WINDOW_WIDTH};
     int m_height {WINDOW_HEIGHT};
