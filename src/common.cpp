@@ -27,3 +27,41 @@ glm::vec3 GetAttenuationCoeff(float distance) {
 
     return glm::vec3(kc, glm::max(kl, 0.0f), glm::max(kq * kq, 0.0f));
 }
+
+glm::vec3 max_element_xyz(std::vector<glm::vec3>* aGlmVec3)
+{
+    std::vector<glm::vec3>::iterator first = aGlmVec3->begin();
+    std::vector<glm::vec3>::iterator last = aGlmVec3->end();
+    if (first == last)
+    {
+        return *last;
+    }
+    
+    glm::vec3 res = *first;
+    ++first;
+    for (; first < last; ++first) {
+        if (res.x < first->x) res.x = first->x;
+        if (res.y < first->y) res.y = first->y;
+        if (res.z < first->z) res.z = first->z;        
+    }
+    return res;
+}
+
+glm::vec3 min_element_xyz(std::vector<glm::vec3>* aGlmVec3)
+{
+    std::vector<glm::vec3>::iterator first = aGlmVec3->begin();
+    std::vector<glm::vec3>::iterator last = aGlmVec3->end();
+    if (first == last)
+    {
+        return *last;
+    }
+    
+    glm::vec3 res = *first;
+    ++first;
+    for (; first < last; ++first) {
+        if (res.x > first->x) res.x = first->x;
+        if (res.y > first->y) res.y = first->y;
+        if (res.z > first->z) res.z = first->z;        
+    }
+    return res;
+}

@@ -22,6 +22,10 @@ using klassName ## WPtr=std::weak_ptr<klassName>;
 
 // std::optional<std::string> : if not defined, nullptr 
 std::optional<std::string> LoadTextFile(const std::string& filename);
+
 glm::vec3 GetAttenuationCoeff(float distance);
+
+glm::vec3 max_element_xyz(std::vector<glm::vec3>* aGlmVec3);
+
 #endif // __COMMON_H__
 
