@@ -27,5 +27,7 @@ glm::vec3 GetAttenuationCoeff(float distance);
 
 glm::vec3 max_element_xyz(std::vector<glm::vec3>* aGlmVec3);
 
+glm::vec3 min_element_xyz(std::vector<glm::vec3>* aGlmVec3);
+
 #endif // __COMMON_H__
 

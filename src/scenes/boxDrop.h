@@ -14,7 +14,9 @@ public :
         // ex) 
         // int64_t const initParticleNumber = voxelizer->CreateParticles(&g_buffer->m_positions);
  
-        g_buffer->m_commonParam.radius  = 0.1;      
+        g_buffer->m_commonParam.radius  = 0.1;    
+        g_buffer->m_commonParam.diameter= 0.2;    
+        g_buffer->m_commonParam.H       = 0.48;      
         g_buffer->m_commonParam.dt      = 0.001;      
 
         // Box Generate
@@ -26,6 +28,7 @@ public :
         g_buffer->m_velocities.reserve(initParticleNumber);
         g_buffer->m_phases.reserve(initParticleNumber);
         g_buffer->m_densities.reserve(initParticleNumber);
+        g_buffer->m_colorValues.reserve(initParticleNumber);
 
         for (int32_t ii = 0 ; ii < xNum ; ++ii)
             for (int32_t jj = 0 ; jj < yNum ; ++jj)
@@ -34,7 +37,8 @@ public :
                     g_buffer->m_positions.push_back(glm::vec3(2*ii*g_buffer->m_commonParam.radius, 2*jj*g_buffer->m_commonParam.radius, 2*kk*g_buffer->m_commonParam.radius));
                     g_buffer->m_velocities.push_back(glm::vec3(0.01, 0.0, 0.0));
                     g_buffer->m_phases.push_back(0);
-                    g_buffer->m_densities.push_back(static_cast<float>(jj));
+                    g_buffer->m_densities.push_back(1000.0f);
+                    g_buffer->m_colorValues.push_back(static_cast<float>(jj));
                 }
     }
 };

@@ -83,7 +83,7 @@ bool Context::MapSimBuffer(SimBufferPtr simBuffer)
 {
     // Copy Address
     m_positions = &simBuffer->m_positions; 
-    m_colors = &simBuffer->m_densities; 
+    m_colors = &simBuffer->m_colorValues;
     m_commonParam = &simBuffer->m_commonParam;
     return true;
     // uint64_t count = (int)(positions->size());
@@ -178,8 +178,7 @@ void Context::Render()
         GL_ARRAY_BUFFER, GL_STATIC_DRAW,
         m_positions->data(), sizeof(glm::vec3), m_positions->size());
     pointVertexLayout->SetAttrib(0, 3, GL_FLOAT, false, sizeof(glm::vec3), 0);
-    // TODO : m_colors need to be normalized. or Set Uniform value the min/max values.
-    auto pointVertexBuffer2 = Buffer::CreateWithData(
+    auto pointVertexColorBuffer = Buffer::CreateWithData(
         GL_ARRAY_BUFFER, GL_STATIC_DRAW,
         m_colors->data(), sizeof(float), m_colors->size());
     pointVertexLayout->SetAttrib(1, 1, GL_FLOAT, false, sizeof(float), 0);
