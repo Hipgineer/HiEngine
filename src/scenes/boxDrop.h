@@ -14,15 +14,15 @@ public :
         // ex) 
         // int64_t const initParticleNumber = voxelizer->CreateParticles(&g_buffer->m_positions);
  
-        g_buffer->m_commonParam.radius  = 0.1;    
-        g_buffer->m_commonParam.diameter= 0.2;    
-        g_buffer->m_commonParam.H       = 0.48;      
-        g_buffer->m_commonParam.dt      = 0.001;      
+        g_buffer->m_commonParam.radius  = 0.01f;    
+        g_buffer->m_commonParam.diameter= 0.02f;    
+        g_buffer->m_commonParam.H       = 0.048f;      
+        g_buffer->m_commonParam.dt      = 0.0001f;      
 
         // Box Generate
-        int32_t xNum = 10;
-        int32_t yNum = 10;
-        int32_t zNum = 10;
+        int32_t xNum = 20;
+        int32_t yNum = 20;
+        int32_t zNum = 20;
         int32_t const initParticleNumber = xNum*yNum*zNum;
         g_buffer->m_positions.reserve(initParticleNumber);
         g_buffer->m_velocities.reserve(initParticleNumber);

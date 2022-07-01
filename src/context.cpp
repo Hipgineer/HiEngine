@@ -105,16 +105,22 @@ void Context::Render()
         if (ImGui::ColorEdit4("clear color", glm::value_ptr(m_clearColor)))
             glClearColor(m_clearColor.x, m_clearColor.y, m_clearColor.z, m_clearColor.w);
         ImGui::Separator();
-        ImGui::DragFloat3("camera pos", glm::value_ptr(m_cameraPos), 0.01f);
-        ImGui::DragFloat("camera yaw", &m_cameraYaw, 0.5f);
-        ImGui::DragFloat("camera pitch", &m_cameraPitch, 0.5f, -89.0f, 89.0f);
+        // ImGui::DragFloat3("camera pos", glm::value_ptr(m_cameraPos), 0.01f);
+        // ImGui::DragFloat("camera yaw", &m_cameraYaw, 0.5f);
+        // ImGui::DragFloat("camera pitch", &m_cameraPitch, 0.5f, -89.0f, 89.0f);
+        ImGui::DragFloat("camera speed", &m_cameraSpeedRatio, 0.001f, 0.001f, 100.0f);
         ImGui::Separator();
         if (ImGui::Button("reset camera"))
         {
             m_cameraYaw = 0.0f;
             m_cameraPitch = 0.0f;
             m_cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+            m_cameraSpeedRatio = 1.0f;
         }
+        
+        ImGui::Separator();
+        ImGui::DragFloat("particle size", &m_particleSizeRatio, 0.01f, 0.01f, 2.0f);
+        ImGui::Separator();
 
         if (ImGui::CollapsingHeader("light", ImGuiTreeNodeFlags_DefaultOpen))
         {
@@ -189,7 +195,7 @@ void Context::Render()
     m_pointProgram->SetUniform("transform", proj*view);
     m_pointProgram->SetUniform("viewTransform", view);
     m_pointProgram->SetUniform("pointTransform", pointTransform);
-    m_pointProgram->SetUniform("pointRadius", m_commonParam->radius);
+    m_pointProgram->SetUniform("pointRadius", m_particleSizeRatio*m_commonParam->radius);
     m_pointProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f)))); 
     m_pointProgram->SetUniform("colorMax", *std::max_element(m_colors->begin(), m_colors->end()));
     m_pointProgram->SetUniform("colorMin", *std::min_element(m_colors->begin(), m_colors->end()));

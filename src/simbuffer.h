@@ -6,8 +6,8 @@
 uint64_t const maxParticle = 1'000'000;
 struct CommonParameters {
 	float radius;
-	float diameter;
-	float H;
+	float diameter = 2.0f * radius;
+	float H = 1.3f * diameter;
 	float dt;
 	CommonParameters() : 
 		radius(0.1f), 
