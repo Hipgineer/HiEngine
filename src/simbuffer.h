@@ -4,6 +4,12 @@
 #include "common.h"
 
 uint64_t const maxParticle = 1'000'000;
+
+// enum OutputType {
+// 	DENSITY,
+	
+// }
+
 struct CommonParameters {
 	float radius;
 	float diameter = 2.0f * radius;
@@ -14,6 +20,13 @@ struct CommonParameters {
 		diameter(0.2f),
 		H(0.48f),
 		dt(0.1f)
+		{};
+};
+
+struct PhaseParameters {
+	float density;
+	glm::vec3 color; 
+	PhaseParameters() : density(1000.0f), color(glm::vec3(1.0f,0.0f,0.0f))
 		{};
 };
 
@@ -36,6 +49,7 @@ public :
 	std::vector<float>      m_colorValues;
 
 	CommonParameters m_commonParam;
+	std::vector<PhaseParameters> m_phaseParam;
 
 
 private :

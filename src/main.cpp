@@ -171,7 +171,6 @@ int main(int argc, const char** argv)
     ImGui_ImplOpenGL3_CreateFontsTexture();
     ImGui_ImplOpenGL3_CreateDeviceObjects();
 
-
     // o ---------------------------------------------------------------------- o
     // |                           MAIN PROGRAM                                 |
     // o ---------------------------------------------------------------------- o
@@ -219,7 +218,6 @@ int main(int argc, const char** argv)
     // Load All Scenes
     g_scenes.push_back(new BoxDrop("box_drop")); // new로 생성된 클래스는 포인터인가?
 
-
     // Load Current Scene
     g_scene = 0;
     g_scenes[g_scene]->Init();
@@ -232,6 +230,7 @@ int main(int argc, const char** argv)
         return -1;
     }
     
+    // 
     if (!g_context->MapSimBuffer(g_buffer)){
         SPDLOG_ERROR("failed to copy simBuffer data to context");
         return -1;

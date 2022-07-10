@@ -20,10 +20,12 @@ public :
         g_buffer->m_commonParam.dt      = 0.0001f;      
 
         // Box Generate
-        int32_t xNum = 20;
-        int32_t yNum = 20;
-        int32_t zNum = 20;
+        int32_t xNum = 10;
+        int32_t yNum = 10;
+        int32_t zNum = 10;
+
         int32_t const initParticleNumber = xNum*yNum*zNum;
+        
         g_buffer->m_positions.reserve(initParticleNumber);
         g_buffer->m_velocities.reserve(initParticleNumber);
         g_buffer->m_phases.reserve(initParticleNumber);
