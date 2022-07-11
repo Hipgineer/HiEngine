@@ -121,26 +121,32 @@ void Context::Render()
         ImGui::Separator();
         ImGui::DragFloat("particle size", &m_particleSizeRatio, 0.01f, 0.01f, 2.0f);
         ImGui::Separator();
+        
+        ImGui::Separator();
+        ImGui::Checkbox("legend auto", &m_autoLegend);
+        ImGui::InputFloat("legend min", &m_minLegend,0.1f, 0.2f, "%.3f");
+        ImGui::InputFloat("legend max", &m_maxLegend,0.1f, 0.2f, "%.3f");
+        ImGui::Separator();
 
-        if (ImGui::CollapsingHeader("light", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            ImGui::DragFloat3("l.position", glm::value_ptr(m_light.position), 0.01f);
-            ImGui::DragFloat3("l.direction", glm::value_ptr(m_light.direction), 0.01f);
-            ImGui::DragFloat2("l.cutoff", glm::value_ptr(m_light.cutoff), 0.5f, 0.0f, 180.0f);
-            ImGui::DragFloat("l.distance", &m_light.distance, 0.5f, 0.0f, 3000.0f);
-            ImGui::ColorEdit3("l.ambient", glm::value_ptr(m_light.ambient));
-            ImGui::ColorEdit3("l.diffuse", glm::value_ptr(m_light.diffuse));
-            ImGui::ColorEdit3("l.specular", glm::value_ptr(m_light.specular));
-        }
+        // if (ImGui::CollapsingHeader("light", ImGuiTreeNodeFlags_DefaultOpen))
+        // {
+        //     ImGui::DragFloat3("l.position", glm::value_ptr(m_light.position), 0.01f);
+        //     ImGui::DragFloat3("l.direction", glm::value_ptr(m_light.direction), 0.01f);
+        //     ImGui::DragFloat2("l.cutoff", glm::value_ptr(m_light.cutoff), 0.5f, 0.0f, 180.0f);
+        //     ImGui::DragFloat("l.distance", &m_light.distance, 0.5f, 0.0f, 3000.0f);
+        //     ImGui::ColorEdit3("l.ambient", glm::value_ptr(m_light.ambient));
+        //     ImGui::ColorEdit3("l.diffuse", glm::value_ptr(m_light.diffuse));
+        //     ImGui::ColorEdit3("l.specular", glm::value_ptr(m_light.specular));
+        // }
 
-        if (ImGui::CollapsingHeader("material", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            ImGui::ColorEdit3("m.diffuse", glm::value_ptr(m_materialBasic.diffuse));
-            ImGui::ColorEdit3("m.specular", glm::value_ptr(m_materialBasic.specular));
-            ImGui::DragFloat("m.shininess", &m_materialBasic.shininess, 1.0f, 1.0f, 256.0f);
-        }
+        // if (ImGui::CollapsingHeader("material", ImGuiTreeNodeFlags_DefaultOpen))
+        // {
+        //     ImGui::ColorEdit3("m.diffuse", glm::value_ptr(m_materialBasic.diffuse));
+        //     ImGui::ColorEdit3("m.specular", glm::value_ptr(m_materialBasic.specular));
+        //     ImGui::DragFloat("m.shininess", &m_materialBasic.shininess, 1.0f, 1.0f, 256.0f);
+        // }
 
-        ImGui::Checkbox("flash light", &m_flashLightMode);
+        // ImGui::Checkbox("flash light", &m_flashLightMode);
     }
     ImGui::End();
 
@@ -175,6 +181,12 @@ void Context::Render()
         m_simpleProgram->SetUniform("transform", proj * view * lightModelTransform);
         m_box->Draw(m_simpleProgram.get());
     }
+    // Legend
+    if (m_autoLegend)
+    {
+        m_minLegend = *std::min_element(m_colors->begin(), m_colors->end());
+        m_maxLegend = *std::max_element(m_colors->begin(), m_colors->end());
+    }
 
     // TODO : Refactoring Like m_box
     // linking Point shader buffers
@@ -197,8 +209,8 @@ void Context::Render()
     m_pointProgram->SetUniform("pointTransform", pointTransform);
     m_pointProgram->SetUniform("pointRadius", m_particleSizeRatio*m_commonParam->radius);
     m_pointProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f)))); 
-    m_pointProgram->SetUniform("colorMax", *std::max_element(m_colors->begin(), m_colors->end()));
-    m_pointProgram->SetUniform("colorMin", *std::min_element(m_colors->begin(), m_colors->end()));
+    m_pointProgram->SetUniform("colorMin", m_minLegend);
+    m_pointProgram->SetUniform("colorMax", m_maxLegend);
     m_pointProgram->SetUniform("cameraPos", m_cameraPos);
     m_pointProgram->SetUniform("light.position", lightPos);
     m_pointProgram->SetUniform("light.direction", lightDir);
