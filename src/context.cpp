@@ -124,8 +124,8 @@ void Context::Render()
         
         ImGui::Separator();
         ImGui::Checkbox("legend auto", &m_autoLegend);
-        ImGui::InputFloat("legend min", &m_minLegend,0.1f, 0.2f, "%.3f");
-        ImGui::InputFloat("legend max", &m_maxLegend,0.1f, 0.2f, "%.3f");
+        ImGui::InputFloat("legend min", &m_minLegend,0.1f, 0.2f, "%.10f");
+        ImGui::InputFloat("legend max", &m_maxLegend,0.1f, 0.2f, "%.10f");
         ImGui::Separator();
 
         // if (ImGui::CollapsingHeader("light", ImGuiTreeNodeFlags_DefaultOpen))
@@ -184,8 +184,8 @@ void Context::Render()
     // Legend
     if (m_autoLegend)
     {
-        m_minLegend = *std::min_element(m_colors->begin(), m_colors->end());
-        m_maxLegend = *std::max_element(m_colors->begin(), m_colors->end());
+        m_minLegend = static_cast<float>(*std::min_element(m_colors->begin(), m_colors->end()));
+        m_maxLegend = static_cast<float>(*std::max_element(m_colors->begin(), m_colors->end()));
     }
 
     // TODO : Refactoring Like m_box

@@ -25,7 +25,7 @@ SimBufferPtr        g_buffer = nullptr;
 std::vector<Scene*> g_scenes;
 uint32_t            g_scene = 0;
 
-bool g_pause = false; // pause update or not
+bool g_pause = true; // pause update or not
 bool g_step  = false; // update only one step when g_pause = true
 
 // common variables

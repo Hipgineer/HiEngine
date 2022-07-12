@@ -19,6 +19,11 @@ public :
         g_buffer->m_commonParam.H       = 0.048f;      
         g_buffer->m_commonParam.dt      = 0.0001f;      
 
+        PhaseParameters Water;
+        Water.density = 1000.0f; 
+        Water.color   = glm::vec3(1.0f, 0.0f, 0.0f);
+        g_buffer->m_phaseParam.push_back(Water); // phase : 0
+        
         // Box Generate
         int32_t xNum = 10;
         int32_t yNum = 10;
@@ -29,7 +34,6 @@ public :
         g_buffer->m_positions.reserve(initParticleNumber);
         g_buffer->m_velocities.reserve(initParticleNumber);
         g_buffer->m_phases.reserve(initParticleNumber);
-        g_buffer->m_densities.reserve(initParticleNumber);
         g_buffer->m_colorValues.reserve(initParticleNumber);
 
         for (int32_t ii = 0 ; ii < xNum ; ++ii)
@@ -37,9 +41,8 @@ public :
                 for (int32_t kk = 0 ; kk < zNum ; ++kk)
                 {
                     g_buffer->m_positions.push_back(glm::vec3(2*ii*g_buffer->m_commonParam.radius, 2*jj*g_buffer->m_commonParam.radius, 2*kk*g_buffer->m_commonParam.radius));
-                    g_buffer->m_velocities.push_back(glm::vec3(0.01, 0.0, 0.0));
+                    g_buffer->m_velocities.push_back(glm::vec3(ii*0.01f, jj*0.01f, kk*0.01f));
                     g_buffer->m_phases.push_back(0);
-                    g_buffer->m_densities.push_back(1000.0f);
                     g_buffer->m_colorValues.push_back(static_cast<float>(jj));
                 }
     }

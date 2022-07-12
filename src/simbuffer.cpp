@@ -12,11 +12,11 @@ bool SimBuffer::Init () {
     m_positions.reserve(maxParticle); 
     m_velocities.reserve(maxParticle);
     m_phases.reserve(maxParticle);
-    m_densities.reserve(maxParticle);
+	m_colorValues.reserve(maxParticle);
 
     m_positions.resize(0);
     m_velocities.resize(0);
     m_phases.resize(0);
-    m_densities.resize(0);
+    m_colorValues.resize(0);
     return true;
 }
