@@ -128,6 +128,23 @@ void Context::Render()
         ImGui::InputFloat("legend max", &m_maxLegend,0.1f, 0.2f, "%.10f");
         ImGui::Separator();
 
+        if (ImGui::CollapsingHeader("Numerical Parameters", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            ImGui::InputFloat("particle radius", &m_commonParam->radius,
+                                                    0.1f*m_commonParam->radius, 
+                                                    0.2f*m_commonParam->radius, "%.5f");
+            ImGui::InputFloat("relaxationParameter", &m_commonParam->relaxationParameter,
+                                                    0.1f*m_commonParam->relaxationParameter, 
+                                                    0.2f*m_commonParam->relaxationParameter, "%.5f");
+            ImGui::InputFloat("scorrK", &m_commonParam->scorrK,
+                                                    0.1f*m_commonParam->scorrK, 
+                                                    0.2f*m_commonParam->scorrK, "%.5f");
+            ImGui::InputFloat("scorrDq", &m_commonParam->scorrDq,
+                                                    0.1f*m_commonParam->scorrDq, 
+                                                    0.2f*m_commonParam->scorrDq, "%.5f");
+        }
+        
+
         // if (ImGui::CollapsingHeader("light", ImGuiTreeNodeFlags_DefaultOpen))
         // {
         //     ImGui::DragFloat3("l.position", glm::value_ptr(m_light.position), 0.01f);

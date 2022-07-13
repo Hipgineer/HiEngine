@@ -15,11 +15,17 @@ struct CommonParameters {
 	float diameter = 2.0f * radius;
 	float H = 1.3f * diameter;
 	float dt;
+	float relaxationParameter;
+	float scorrK;
+	float scorrDq;
 	CommonParameters() : 
 		radius(0.1f), 
 		diameter(0.2f),
 		H(0.48f),
-		dt(0.1f)
+		dt(0.1f),
+		relaxationParameter(0.0000001f),
+		scorrK(0.01f),
+		scorrDq(0.1f)
 		{};
 };
 
