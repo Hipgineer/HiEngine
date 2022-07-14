@@ -22,5 +22,5 @@ void main() {
 	gl_PointSize = - (pointScale * pointRadius / viewPosition.z);
 
 	// density visualization
-	vrtColor = mix(vec3(0.0,0.5,1.0), vec3(1.0,0.5,0.0),  (aColor-colorMin)/(colorMax-colorMin));
+	vrtColor = mix(vec3(0.7,0.7,0.7), vec3(1.0,0.0,0.0),  (aColor-colorMin)/(colorMax-colorMin));
 }

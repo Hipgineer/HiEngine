@@ -18,6 +18,7 @@ struct CommonParameters {
 	float relaxationParameter;
 	float scorrK;
 	float scorrDq;
+	int32_t iterationNumber;
 	CommonParameters() : 
 		radius(0.1f), 
 		diameter(0.2f),
@@ -25,7 +26,8 @@ struct CommonParameters {
 		dt(0.1f),
 		relaxationParameter(0.0000001f),
 		scorrK(0.01f),
-		scorrDq(0.1f)
+		scorrDq(0.1f),
+		iterationNumber(3)
 		{};
 };
 

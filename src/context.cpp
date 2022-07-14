@@ -130,9 +130,13 @@ void Context::Render()
 
         if (ImGui::CollapsingHeader("Numerical Parameters", ImGuiTreeNodeFlags_DefaultOpen))
         {
+            ImGui::SliderInt("Iterations", &m_commonParam->iterationNumber,1,30);
             ImGui::InputFloat("particle radius", &m_commonParam->radius,
                                                     0.1f*m_commonParam->radius, 
                                                     0.2f*m_commonParam->radius, "%.5f");
+            ImGui::InputFloat("compute time step", &m_commonParam->dt,
+                                                    0.1f*m_commonParam->dt, 
+                                                    0.2f*m_commonParam->dt, "%.5f");
             ImGui::InputFloat("relaxationParameter", &m_commonParam->relaxationParameter,
                                                     0.1f*m_commonParam->relaxationParameter, 
                                                     0.2f*m_commonParam->relaxationParameter, "%.5f");
