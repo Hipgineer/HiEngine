@@ -28,6 +28,9 @@ public:
     void Reshape(int width, int height);
     void PressKey(int key, int scancode, int action, int mods);
 
+    bool ReloadScene() {return m_reloadScene;};
+    void DoneReloadScene() {m_reloadScene = false;};
+
 private:
     Context() {};
     bool Init();
@@ -43,6 +46,7 @@ private:
     TextureUPtr m_texture2;
     
     // animation
+    bool m_reloadScene {false};
 
     // clear color
     glm::vec4 m_clearColor {glm::vec4(0.1f,0.2f,0.3f,0.0f)};
@@ -86,8 +90,10 @@ private:
     glm::vec3 m_cameraFront { glm::vec3(0.0f,0.0f,-1.0f)};
     glm::vec3 m_cameraUp { glm::vec3(0.0f,1.0f,0.0f)};
 
+    // Particle Size
     float m_particleSizeRatio {1.0f};
 
+    // Legend
     bool m_autoLegend {true};
     float m_minLegend {0.0f};
     float m_maxLegend {1.0f};

@@ -239,6 +239,53 @@ int main(int argc, const char** argv)
     // Main Loop
     SPDLOG_INFO("Start main loop");
     while (!glfwWindowShouldClose(g_window)) {
+        if (g_context->ReloadScene())
+        {
+            printf("Scene Reload");
+            g_hiPhysics->ClearMemory();
+            g_hiPhysics.reset(); // or g_solver = nullptr;
+            g_buffer.reset();
+
+            // HiPhysics - initialize solver
+            SPDLOG_INFO("Initialize HiPhysics");
+            g_hiPhysics = HiPhysics::Create();
+            if (!g_hiPhysics)
+            {
+                SPDLOG_ERROR("failed to create HiPhysics");
+                return -1;
+            }
+
+            // SimBuffer - initialize Buffer
+            SPDLOG_INFO("Initialize Simulation Buffer");
+            g_buffer = SimBuffer::Create();
+            if (!g_buffer)
+            {
+                SPDLOG_ERROR("failed to create Simulation Buffer");
+                return -1;
+            }
+
+            // Load Current Scene
+            g_scenes[g_scene]->Init();
+
+            SPDLOG_INFO("init number of particles : {}", g_buffer->GetNumParticles());
+
+            // Initialize Scene into hiphysics engine
+            if (!g_hiPhysics->SetMemory(g_buffer))
+            {
+                SPDLOG_ERROR("CUDA : failed to copy host to device.");
+                return -1;
+            }
+
+            //
+            if (!g_context->MapSimBuffer(g_buffer))
+            {
+                SPDLOG_ERROR("failed to copy simBuffer data to context");
+                return -1;
+            }
+            g_context->DoneReloadScene();
+            g_pause = true; // pause update or not
+        }
+        
         glfwPollEvents(); // collecting events of mouse and keyboard
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();

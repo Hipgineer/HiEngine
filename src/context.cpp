@@ -117,6 +117,10 @@ void Context::Render()
             m_cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
             m_cameraSpeedRatio = 1.0f;
         }
+        if (ImGui::Button("Reload Scene"))
+        {
+            m_reloadScene = true;
+        }
         
         ImGui::Separator();
         ImGui::DragFloat("particle size", &m_particleSizeRatio, 0.01f, 0.01f, 2.0f);
