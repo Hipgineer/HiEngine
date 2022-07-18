@@ -96,6 +96,49 @@ void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
     if (key == GLFW_KEY_O && (action == GLFW_PRESS || action == GLFW_REPEAT)) g_step  = true;
 }
 
+bool InitializeWithScene(int32_t sceneIndex) {
+    g_scene = sceneIndex;
+
+    // HiPhysics - initialize solver
+    SPDLOG_INFO("Initialize HiPhysics");
+    g_hiPhysics = HiPhysics::Create();
+    if (!g_hiPhysics)
+    {
+        SPDLOG_ERROR("failed to create HiPhysics");
+        return false;
+    }
+
+    // SimBuffer - initialize Buffer
+    SPDLOG_INFO("Initialize Simulation Buffer");
+    g_buffer = SimBuffer::Create();
+    if (!g_buffer)
+    {
+        SPDLOG_ERROR("failed to create Simulation Buffer");
+        return false;
+    }
+
+    // Load Current Scene
+    g_scenes[g_scene]->Init();
+
+    SPDLOG_INFO("init number of particles : {}", g_buffer->GetNumParticles());
+
+    // Initialize Scene into hiphysics engine
+    if (!g_hiPhysics->SetMemory(g_buffer))
+    {
+        SPDLOG_ERROR("CUDA : failed to copy host to device.");
+        return false;
+    }
+
+    // 
+    if (!g_context->MapSimBuffer(g_buffer))
+    {
+        SPDLOG_ERROR("failed to copy simBuffer data to context");
+        return false;
+    }
+
+    return true;
+}
+
 // o =========================================================================== o
 // |                                                                             |
 // |                                                                             |
@@ -199,102 +242,39 @@ int main(int argc, const char** argv)
     glfwSetMouseButtonCallback(g_window, OnMouseButton);
     glfwSetScrollCallback(g_window, OnScroll);
 
-    // HiPhysics - initialize solver
-    SPDLOG_INFO("Initialize HiPhysics");
-    g_hiPhysics = HiPhysics::Create();
-    if(!g_hiPhysics) {
-        SPDLOG_ERROR("failed to create HiPhysics");
-        return -1;
-    }
-
-    // SimBuffer - initialize Buffer
-    SPDLOG_INFO("Initialize Simulation Buffer");
-    g_buffer = SimBuffer::Create();
-    if(!g_buffer) {
-        SPDLOG_ERROR("failed to create Simulation Buffer");
-        return -1;
-    }
 
     // Load All Scenes
     g_scenes.push_back(new BoxDrop("box_drop")); // new로 생성된 클래스는 포인터인가?
 
     // Load Current Scene
     g_scene = 0;
-    g_scenes[g_scene]->Init();
-    
-    SPDLOG_INFO("init number of particles : {}", g_buffer->GetNumParticles());
-
-    // Initialize Scene into hiphysics engine
-    if (!g_hiPhysics->SetMemory(g_buffer)){
-        SPDLOG_ERROR("CUDA : failed to copy host to device.");
-        return -1;
-    }
-    
-    // 
-    if (!g_context->MapSimBuffer(g_buffer)){
-        SPDLOG_ERROR("failed to copy simBuffer data to context");
-        return -1;
-    }
+    InitializeWithScene(g_scene);
 
     // Main Loop
     SPDLOG_INFO("Start main loop");
     while (!glfwWindowShouldClose(g_window)) {
-        if (g_context->ReloadScene())
+
+        // Change Scene
+        if (g_context->m_selectedScene != -1)
         {
             printf("Scene Reload");
+            g_scene = g_context->m_selectedScene;
+            g_context->m_selectedScene = -1;
+
+            // Clear Solver and SimBuffer
             g_hiPhysics->ClearMemory();
             g_hiPhysics.reset(); // or g_solver = nullptr;
             g_buffer.reset();
+            
+            // Initialize Solver and SimBuffer
+            InitializeWithScene(g_scene);
 
-            // HiPhysics - initialize solver
-            SPDLOG_INFO("Initialize HiPhysics");
-            g_hiPhysics = HiPhysics::Create();
-            if (!g_hiPhysics)
-            {
-                SPDLOG_ERROR("failed to create HiPhysics");
-                return -1;
-            }
-
-            // SimBuffer - initialize Buffer
-            SPDLOG_INFO("Initialize Simulation Buffer");
-            g_buffer = SimBuffer::Create();
-            if (!g_buffer)
-            {
-                SPDLOG_ERROR("failed to create Simulation Buffer");
-                return -1;
-            }
-
-            // Load Current Scene
-            g_scenes[g_scene]->Init();
-
-            SPDLOG_INFO("init number of particles : {}", g_buffer->GetNumParticles());
-
-            // Initialize Scene into hiphysics engine
-            if (!g_hiPhysics->SetMemory(g_buffer))
-            {
-                SPDLOG_ERROR("CUDA : failed to copy host to device.");
-                return -1;
-            }
-
-            //
-            if (!g_context->MapSimBuffer(g_buffer))
-            {
-                SPDLOG_ERROR("failed to copy simBuffer data to context");
-                return -1;
-            }
-            g_context->DoneReloadScene();
             g_pause = true; // pause update or not
         }
         
         glfwPollEvents(); // collecting events of mouse and keyboard
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-
-        // TODO : Relaod the Scene when changed
-        // if (g_sceneChange) {
-        //     Scene::LoadScene(g_hiPhysics);  
-        //     g_sceneChange = false;
-        // }
 
         //TODO : interactive callbacks with HiPhysics
         // if (!g_callback)

@@ -28,8 +28,8 @@ public:
     void Reshape(int width, int height);
     void PressKey(int key, int scancode, int action, int mods);
 
-    bool ReloadScene() {return m_reloadScene;};
-    void DoneReloadScene() {m_reloadScene = false;};
+    // animation
+    int32_t m_selectedScene {0};
 
 private:
     Context() {};
@@ -45,8 +45,6 @@ private:
     TextureUPtr m_texture;
     TextureUPtr m_texture2;
     
-    // animation
-    bool m_reloadScene {false};
 
     // clear color
     glm::vec4 m_clearColor {glm::vec4(0.1f,0.2f,0.3f,0.0f)};

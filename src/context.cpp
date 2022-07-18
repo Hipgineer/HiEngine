@@ -119,7 +119,7 @@ void Context::Render()
         }
         if (ImGui::Button("Reload Scene"))
         {
-            m_reloadScene = true;
+            m_selectedScene = 0;
         }
         
         ImGui::Separator();
