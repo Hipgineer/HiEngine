@@ -96,6 +96,12 @@ void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
     if (key == GLFW_KEY_O && (action == GLFW_PRESS || action == GLFW_REPEAT)) g_step  = true;
 }
 
+// o =========================================================================== o
+// |                                                                             |
+// |                                                                             |
+// |                                                                             |
+// o =========================================================================== o
+
 bool InitializeWithScene(int32_t sceneIndex) {
     g_scene = sceneIndex;
 
@@ -319,6 +325,8 @@ int main(int argc, const char** argv)
     ImGui::DestroyContext(imguiContext);
 
     glfwTerminate();
+    
     g_window = nullptr;
+
     return 0;
 }

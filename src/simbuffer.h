@@ -10,6 +10,17 @@ uint64_t const maxParticle = 1'000'000;
 	
 // }
 
+struct boxPoint {
+	glm::vec3 minPoint;
+	glm::vec3 maxPoint;
+	boxPoint() {};
+	boxPoint(glm::vec3 minP, glm::vec3 maxP)
+	{
+		minPoint = minP;
+		maxPoint = maxP;
+	};
+};
+
 struct CommonParameters {
 	float radius;
 	float diameter = 2.0f * radius;
@@ -19,6 +30,8 @@ struct CommonParameters {
 	float scorrK;
 	float scorrDq;
 	int32_t iterationNumber;
+	boxPoint AnalysisBox;
+	
 	CommonParameters() : 
 		radius(0.1f), 
 		diameter(0.2f),
@@ -27,15 +40,18 @@ struct CommonParameters {
 		relaxationParameter(0.0000001f),
 		scorrK(0.01f),
 		scorrDq(0.1f),
-		iterationNumber(3)
+		iterationNumber(3),
+		AnalysisBox(boxPoint(glm::vec3(0.0f), glm::vec3(1.0f)))
 		{};
 };
 
 struct PhaseParameters {
 	float density;
 	glm::vec3 color; 
-	PhaseParameters() : density(1000.0f), color(glm::vec3(1.0f,0.0f,0.0f))
-		{};
+	PhaseParameters() : 
+		density(1000.0f), 
+		color(glm::vec3(1.0f,0.0f,0.0f))
+	{};
 };
 
 CLASS_PTR(SimBuffer);

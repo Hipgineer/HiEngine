@@ -15,19 +15,25 @@ public :
         // int64_t const initParticleNumber = voxelizer->CreateParticles(&g_buffer->m_positions);
  
         g_buffer->m_commonParam.radius  = 0.01f;    
-        g_buffer->m_commonParam.diameter= 0.02f;    
-        g_buffer->m_commonParam.H       = 0.048f;      
+        g_buffer->m_commonParam.diameter= g_buffer->m_commonParam.radius * 2.0f;    
+        g_buffer->m_commonParam.H       = g_buffer->m_commonParam.diameter * 2.0f * 1.2f ; // 0.048f;      
         g_buffer->m_commonParam.dt      = 0.002f;   
 
         g_buffer->m_commonParam.iterationNumber = 3;
 	    g_buffer->m_commonParam.relaxationParameter = powf(3.3f/g_buffer->m_commonParam.radius,2.0f);
 	    g_buffer->m_commonParam.scorrK              = 0.001f;
-	    g_buffer->m_commonParam.scorrDq             = 0.1f;
+	    g_buffer->m_commonParam.scorrDq             = 0.3f;
+        g_buffer->m_commonParam.AnalysisBox         = boxPoint(glm::vec3(-0.5f, -0.1f, -0.2f), glm::vec3(0.5f, 1.0f, 0.2f));
 
         PhaseParameters Water;
         Water.density = 1000.0f; 
         Water.color   = glm::vec3(1.0f, 0.0f, 0.0f);
         g_buffer->m_phaseParam.push_back(Water); // phase : 0
+        
+        // PhaseParameters Oil;
+        // Water.density = 2000.0f; 
+        // Water.color   = glm::vec3(1.0f, 0.0f, 0.0f);
+        // g_buffer->m_phaseParam.push_back(Oil); // phase : 1
         
         // Box Generate
         int32_t xNum = 40;

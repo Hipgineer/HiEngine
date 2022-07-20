@@ -135,21 +135,12 @@ void Context::Render()
         if (ImGui::CollapsingHeader("Numerical Parameters", ImGuiTreeNodeFlags_DefaultOpen))
         {
             ImGui::SliderInt("Iterations", &m_commonParam->iterationNumber,1,30);
-            ImGui::InputFloat("particle radius", &m_commonParam->radius,
-                                                    0.1f*m_commonParam->radius, 
-                                                    0.2f*m_commonParam->radius, "%.5f");
-            ImGui::InputFloat("compute time step", &m_commonParam->dt,
-                                                    0.1f*m_commonParam->dt, 
-                                                    0.2f*m_commonParam->dt, "%.5f");
-            ImGui::InputFloat("relaxationParameter", &m_commonParam->relaxationParameter,
-                                                    0.1f*m_commonParam->relaxationParameter, 
-                                                    0.2f*m_commonParam->relaxationParameter, "%.5f");
-            ImGui::InputFloat("scorrK", &m_commonParam->scorrK,
-                                                    0.1f*m_commonParam->scorrK, 
-                                                    0.2f*m_commonParam->scorrK, "%.5f");
-            ImGui::InputFloat("scorrDq", &m_commonParam->scorrDq,
-                                                    0.1f*m_commonParam->scorrDq, 
-                                                    0.2f*m_commonParam->scorrDq, "%.5f");
+            if (ImGui::InputFloat("particle radius", &m_commonParam->radius,0.1f*m_commonParam->radius, 0.2f*m_commonParam->radius, "%.5f"))
+                m_commonParam->H = m_commonParam->radius * 2.0f * 2.0f * 1.2f;
+            ImGui::InputFloat("compute time step", &m_commonParam->dt, 0.1f*m_commonParam->dt, 0.2f*m_commonParam->dt, "%.5f");
+            ImGui::InputFloat("relaxationParameter", &m_commonParam->relaxationParameter,0.1f*m_commonParam->relaxationParameter, 0.2f*m_commonParam->relaxationParameter, "%.5f");
+            ImGui::InputFloat("scorrK", &m_commonParam->scorrK,0.1f*m_commonParam->scorrK, 0.2f*m_commonParam->scorrK, "%.5f");
+            ImGui::InputFloat("scorrDq", &m_commonParam->scorrDq,0.1f*m_commonParam->scorrDq, 0.2f*m_commonParam->scorrDq, "%.5f");
         }
         
 
@@ -171,7 +162,7 @@ void Context::Render()
         //     ImGui::DragFloat("m.shininess", &m_materialBasic.shininess, 1.0f, 1.0f, 256.0f);
         // }
 
-        // ImGui::Checkbox("flash light", &m_flashLightMode);
+        ImGui::Checkbox("flash light", &m_flashLightMode);
     }
     ImGui::End();
 
