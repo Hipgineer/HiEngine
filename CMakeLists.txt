@@ -10,6 +10,10 @@ cmake_minimum_required(VERSION 3.14)
 
 set(PROJECT_NAME HiEngine)
 set(CMAKE_CXX_STANDARD 17)
+if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
+  set(CMAKE_CUDA_ARCHITECTURES 61) # GTX 1060
+endif()
+
 
 # macro will be used in cpp codes
 set(WINDOW_NAME "HiEngine")
