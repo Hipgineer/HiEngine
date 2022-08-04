@@ -142,6 +142,7 @@ void Context::Render()
             ImGui::InputFloat("scorrK", &m_commonParam->scorrK,0.1f*m_commonParam->scorrK, 0.2f*m_commonParam->scorrK, "%.5f");
             ImGui::InputFloat("scorrDq", &m_commonParam->scorrDq,0.1f*m_commonParam->scorrDq, 0.2f*m_commonParam->scorrDq, "%.5f");
         }
+        ImGui::DragFloat3("gravity",  glm::value_ptr(m_commonParam->gravity), 0.01f);
         
 
         // if (ImGui::CollapsingHeader("light", ImGuiTreeNodeFlags_DefaultOpen))

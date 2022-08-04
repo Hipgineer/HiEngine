@@ -29,6 +29,7 @@ struct CommonParameters {
 	float relaxationParameter;
 	float scorrK;
 	float scorrDq;
+	glm::vec3 gravity;
 	int32_t iterationNumber;
 	boxPoint AnalysisBox;
 	
@@ -40,6 +41,7 @@ struct CommonParameters {
 		relaxationParameter(0.0000001f),
 		scorrK(0.01f),
 		scorrDq(0.1f),
+		gravity(glm::vec3(0.0f, -9.81f, 0.0f)),
 		iterationNumber(3),
 		AnalysisBox(boxPoint(glm::vec3(0.0f), glm::vec3(1.0f)))
 		{};
