@@ -39,6 +39,7 @@ public:
         uint32_t primitiveType);
     static MeshUPtr CreateBox();
     static MeshUPtr CreateBox(glm::vec3 startPoint, glm::vec3 endPoint);
+    static MeshUPtr CreatePlane();
     static MeshUPtr CreateSphere(int8_t slices, int8_t segments, float radius);
 
     const VertexLayout *GetVertexLayout() const { return m_vertexLayout.get(); }
