@@ -8,6 +8,7 @@ class Framebuffer
 {
 public:
     static FramebufferUPtr Create(const TexturePtr colorAttachment);
+    static FramebufferUPtr Create(const TexturePtr colorAttachment, const TexturePtr depthAttachment);
     static void BindToDefault();
     ~Framebuffer();
 
@@ -19,6 +20,7 @@ public:
 private:
     Framebuffer() {}
     bool InitWithColorAttachment(const TexturePtr colorAttachment);
+    bool InitWithColorAndDepthAttachment(const TexturePtr colorAttachment, const TexturePtr depthAttachment);
 
     uint32_t m_framebuffer{0};
     uint32_t m_depthStencilBuffer{0};

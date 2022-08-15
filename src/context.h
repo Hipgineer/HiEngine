@@ -4,6 +4,7 @@
 #include "common.h"
 #include "shader.h"
 #include "program.h"
+#include "framebuffer.h"
 #include "simbuffer.h"
 #include "buffer.h"
 #include "vertex_layout.h"
@@ -32,14 +33,24 @@ public:
     int32_t m_selectedScene {0};
 
 private:
+    void RenderFluidDepth();
+    void RenderFluidThickness();
+    void RenderFluid();
     Context() {};
     bool Init();
     ProgramUPtr m_program;
     ProgramUPtr m_simpleProgram;
     ProgramUPtr m_simpleLightingProgram;
     ProgramUPtr m_pointProgram;
+    ProgramUPtr m_textureProgram;
+    ProgramUPtr m_postProgram; 
+
+    ProgramUPtr m_fluidDepthProgram;
+    ProgramUPtr m_fluidThicknessProgram;
+    ProgramUPtr m_fluidRenderProgram;
 
     MeshUPtr m_box;
+    MeshUPtr m_plane;
     std::vector<MeshUPtr> m_boxes;
     ModelUPtr m_model;
     TextureUPtr m_texture;
@@ -77,7 +88,6 @@ private:
     };
     MaterialBasic m_materialBasic;
 
-
     // camera parameters
     float m_cameraSpeedRatio {1.0f};
     bool m_cameraControl {false};
@@ -87,6 +97,9 @@ private:
     glm::vec3 m_cameraPos { glm::vec3(0.0f,0.0f,3.0f)};
     glm::vec3 m_cameraFront { glm::vec3(0.0f,0.0f,-1.0f)};
     glm::vec3 m_cameraUp { glm::vec3(0.0f,1.0f,0.0f)};
+
+    // framebuffer
+    FramebufferUPtr m_framebuffer;
 
     // Particle Size
     float m_particleSizeRatio {1.0f};

@@ -8,6 +8,14 @@ FramebufferUPtr Framebuffer::Create(const TexturePtr colorAttachment)
     return std::move(framebuffer);
 }
 
+FramebufferUPtr Framebuffer::Create(const TexturePtr colorAttachment, const TexturePtr depthAttachment)
+{
+    auto framebuffer = FramebufferUPtr(new Framebuffer());
+    if (!framebuffer->InitWithColorAndDepthAttachment(colorAttachment, depthAttachment))
+        return nullptr;
+    return std::move(framebuffer);
+}
+
 Framebuffer::~Framebuffer()
 {
     if (m_depthStencilBuffer)
@@ -30,10 +38,10 @@ void Framebuffer::Bind() const
     glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
 }
 
-bool Framebuffer::InitWithColorAndDepthAttachment(const TexturePtr colorAttachment, const TexturePtr depthStencilBuffer)
+bool Framebuffer::InitWithColorAndDepthAttachment(const TexturePtr colorAttachment, const TexturePtr depthAttachment)
 {
     m_colorAttachment = colorAttachment;
-    m_depthStencilBuffer = depthStencilBuffer;
+    m_depthAttachment = depthAttachment;
 
     glGenFramebuffers(1, &m_framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
@@ -42,9 +50,18 @@ bool Framebuffer::InitWithColorAndDepthAttachment(const TexturePtr colorAttachme
                            GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                            colorAttachment->Get(), 0);
 
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER,
-                            GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 
-                            m_depthStencilBuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER,
+                           GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
+                           depthAttachment->Get(), 0);
+
+    // glGenRenderbuffers(1, &m_depthStencilBuffer);
+    // glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBuffer);
+    // glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8,  // GL_DEPTH24_STENCIL8,
+    //                       colorAttachment->GetWidth(), colorAttachment->GetHeight());
+    // glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    // glFramebufferRenderbuffer()
+    // glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, // GL_DEPTH_STENCIL_ATTACHMENT,
+    //                           GL_RENDERBUFFER, m_depthStencilBuffer);
 
     auto result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (result != GL_FRAMEBUFFER_COMPLETE)
@@ -61,7 +78,7 @@ bool Framebuffer::InitWithColorAndDepthAttachment(const TexturePtr colorAttachme
 bool Framebuffer::InitWithColorAttachment(const TexturePtr colorAttachment)
 {
     m_colorAttachment = colorAttachment;
-    glGenFramebuffers(1, &m_framebuffer);
+    glGenFramebuffers(1, &m_framebuffer); 
     glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
 
     glFramebufferTexture2D(GL_FRAMEBUFFER,
@@ -73,8 +90,8 @@ bool Framebuffer::InitWithColorAttachment(const TexturePtr colorAttachment)
     glRenderbufferStorage(
         GL_RENDERBUFFER, GL_DEPTH24_STENCIL8,
         colorAttachment->GetWidth(), colorAttachment->GetHeight());
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
     glFramebufferRenderbuffer(
         GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
         GL_RENDERBUFFER, m_depthStencilBuffer);

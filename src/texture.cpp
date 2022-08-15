@@ -5,7 +5,7 @@ TextureUPtr Texture::Create(int width, int height, uint32_t format)
 {
     auto texture = TextureUPtr(new Texture());
     texture->CreateTexture();
-    texture->SetTextureFormat(width, hegiht, format);
+    texture->SetTextureFormat(width, height, format);
     texture->SetFilter(GL_LINEAR, GL_LINEAR);
     return std::move(texture);    
 }
@@ -42,11 +42,14 @@ void Texture::SetTextureFormat(int width, int height, uint32_t format)
     m_width = width;
     m_height = height;
     m_format = format;
-
-    glTexImage2D(GL_TEXTURE_2D, 0, format, // RGBA? ==> 4bytes : efficient
-        m_width, m_height, 0,
-        format, GL_UNSIGNED_BYTE, 
-        nullptr);
+    if (format == GL_RGBA)
+        glTexImage2D(GL_TEXTURE_2D, 0, format, // RGBA? ==> 4bytes : efficient
+            m_width, m_height, 0,
+            format, GL_UNSIGNED_BYTE, nullptr);
+    else if (format == GL_DEPTH_COMPONENT)
+        glTexImage2D(GL_TEXTURE_2D, 0, format, // RGBA? ==> 4bytes : efficient
+            m_width, m_height, 0,
+            format, GL_FLOAT, nullptr);
 }
 
 void Texture::CreateTexture() {

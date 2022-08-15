@@ -41,7 +41,6 @@ void main() {
     else if ( mag > 0.8)
         fragColor = vec4(vec3(0.0,0.0,0.0), 1.0);
     else {
-        // pixelNorm = transpose(pointTransform)*normalize(pixelNorm);
         pixelNorm = normalize(pixelNorm);
 
         // Light Interactions

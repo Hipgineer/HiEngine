@@ -13,14 +13,8 @@ ContextUPtr Context::Create()
 bool Context::Init()
 {
 
-    // m_box = Mesh::CreateSphere(10, 10, 0.05f);
-    m_box = Mesh::CreateBox(glm::vec3(-0.01f,-0.01f,-0.01f),glm::vec3(0.01f,0.01f,0.01f));
-
-    // m_points = Points::Create();
-
-    m_model = Model::Load("./models/backpack/backpack.obj");
-    if (!m_model)
-        return false;
+    m_box = Mesh::CreateSphere(10, 10, 0.05f);
+    //m_box = Mesh::CreateBox(glm::vec3(-0.01f,-0.01f,-0.01f),glm::vec3(0.01f,0.01f,0.01f));
 
     // Loading Programs
     m_simpleProgram = Program::Create("./shader/simple.vs", "./shader/simple.fs");
@@ -31,50 +25,31 @@ bool Context::Init()
     if (!m_simpleLightingProgram)
         return false;
 
-    m_program = Program::Create("./shader/objLighting.vs", "./shader/objLighting.fs");
-    if (!m_program)
-        return false;
-
     m_pointProgram = Program::Create("./shader/simplePoint.vs","./shader/simplePoint.fs");
     if (!m_pointProgram)
         return false;
 
+    m_textureProgram = Program::Create("./shader/texture.vs", "./shader/texture.fs");
+    if (!m_textureProgram)
+        return false;
+
+    m_fluidDepthProgram = Program::Create("./shader/fluidDepth.vs", "./shader/fluidDepth.fs");
+    if (!m_fluidDepthProgram)
+        return false;
+        
+    m_fluidThicknessProgram = Program::Create("./shader/fluidThickness.vs", "./shader/fluidThickness.fs");
+    if (!m_fluidThicknessProgram)
+        return false;
+
+    m_fluidRenderProgram = Program::Create("./shader/fluidRender.vs", "./shader/fluidRender.fs");
+    if (!m_fluidRenderProgram)
+        return false;
+
+
     // Initializing openGL Scene
     glClearColor(0.0f, 0.1f, 0.2f, 0.0f); // default background color
 
-    // Loading Texture Images
-    auto image = Image::Load("./image/container.jpg");
-    if (!image)
-        return false;
-    SPDLOG_INFO("image: {}x{}, {} channels",
-                image->GetWidth(), image->GetHeight(), image->GetChannelCount());
-    m_texture = Texture::CreateFromImage(image.get());
-
-    auto image2 = Image::Load("./image/awesomeface.png");
-    if (!image2)
-        return false;
-    SPDLOG_INFO("image2: {}x{}, {} channels",
-                image2->GetWidth(), image2->GetHeight(), image2->GetChannelCount());
-    m_texture2 = Texture::CreateFromImage(image2.get());
-
-    // m_material.diffuse = Texture::CreateFromImage(Image::Load("./image/container2.png").get());
-    // m_material.specular = Texture::CreateFromImage(Image::Load("./image/container2_specular.png").get());
-
-    m_material.diffuse = Texture::CreateFromImage(
-        Image::CreateSingleColorImage(4, 4, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)).get());
-
-    m_material.specular = Texture::CreateFromImage(
-        Image::CreateSingleColorImage(4, 4, glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)).get());
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_texture->Get());
-
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, m_texture2->Get());
-
-    m_program->Use();
-    m_program->SetUniform("tex", 0);
-    m_program->SetUniform("tex2", 1);
+    m_plane = Mesh::CreatePlane();
 
     return true;
 }
@@ -86,15 +61,16 @@ bool Context::MapSimBuffer(SimBufferPtr simBuffer)
     m_colors = &simBuffer->m_colorValues;
     m_commonParam = &simBuffer->m_commonParam;
     return true;
-    // uint64_t count = (int)(positions->size());
-    // if (count)
-    // {
-    //     m_positions.resize(count);
-    //     std::copy(positions->begin(), positions->end(), m_positions.begin());
-    //     return true;
-    // }
-    // else
-    //     return false;
+}
+
+void Context::RenderFluidDepth()
+{
+
+}
+
+void Context::RenderFluidThickness()
+{
+
 }
 
 void Context::Render()
@@ -126,8 +102,15 @@ void Context::Render()
         ImGui::DragFloat("particle size", &m_particleSizeRatio, 0.01f, 0.01f, 2.0f);
         ImGui::Separator();
         
+        
+        // Legend
         ImGui::Separator();
         ImGui::Checkbox("legend auto", &m_autoLegend);
+        if (m_autoLegend)
+        {
+            m_minLegend = static_cast<float>(*std::min_element(m_colors->begin(), m_colors->end()));
+            m_maxLegend = static_cast<float>(*std::max_element(m_colors->begin(), m_colors->end()));
+        }
         ImGui::InputFloat("legend min", &m_minLegend,0.1f, 0.2f, "%.10f");
         ImGui::InputFloat("legend max", &m_maxLegend,0.1f, 0.2f, "%.10f");
         ImGui::Separator();
@@ -167,12 +150,24 @@ void Context::Render()
     }
     ImGui::End();
 
+    m_framebuffer->Bind();
+
     // opengl - intialize frame
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_PROGRAM_POINT_SIZE);  
 
+	// glEnable(GL_BLEND);
+	// glBlendFunc(GL_ONE, GL_ONE);
+	// glDepthMask(GL_FALSE);
+	// glEnable(GL_DEPTH_TEST);
+	// glDisable(GL_DEPTH_TEST);
+	// glEnable(GL_PROGRAM_POINT_SIZE);
+	// glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+
     // opengl - render elements
+    
+    // Camera Settings
     float fov = 45.0f;
     float aspect = (float)m_width / (float)m_height;
     m_cameraFront =
@@ -181,7 +176,8 @@ void Context::Render()
         glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
     auto view = glm::lookAt(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
     auto proj = glm::perspective(glm::radians(fov), aspect, 0.01f, 10.0f);
-
+    
+    // Light Settings
     glm::vec3 lightPos = m_light.position;
     glm::vec3 lightDir = m_light.direction;
     if (m_flashLightMode)
@@ -198,52 +194,83 @@ void Context::Render()
         m_simpleProgram->SetUniform("transform", proj * view * lightModelTransform);
         m_box->Draw(m_simpleProgram.get());
     }
-    // Legend
-    if (m_autoLegend)
-    {
-        m_minLegend = static_cast<float>(*std::min_element(m_colors->begin(), m_colors->end()));
-        m_maxLegend = static_cast<float>(*std::max_element(m_colors->begin(), m_colors->end()));
-    }
 
-    // TODO : Refactoring Like m_box
-    // linking Point shader buffers
-
+    // Point Vertex Buffer 
+    // TODO Modulization
     auto pointVertexLayout = VertexLayout::Create();
     auto pointVertexBuffer = Buffer::CreateWithData(
         GL_ARRAY_BUFFER, GL_STATIC_DRAW,
         m_positions->data(), sizeof(glm::vec3), m_positions->size());
     pointVertexLayout->SetAttrib(0, 3, GL_FLOAT, false, sizeof(glm::vec3), 0);
-    auto pointVertexColorBuffer = Buffer::CreateWithData(
-        GL_ARRAY_BUFFER, GL_STATIC_DRAW,
-        m_colors->data(), sizeof(float), m_colors->size());
-    pointVertexLayout->SetAttrib(1, 1, GL_FLOAT, false, sizeof(float), 0);
 
-    auto pointTransform =  - glm::rotate(glm::mat4(1.0f), glm::radians(-m_cameraPitch/2.0f), glm::vec3(1.0f, 0.0f, 0.0f)) *
-                            glm::rotate(glm::mat4(1.0f), glm::radians(-m_cameraYaw/2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    m_pointProgram->Use();
-    m_pointProgram->SetUniform("transform", proj*view);
-    m_pointProgram->SetUniform("viewTransform", view);
-    m_pointProgram->SetUniform("pointTransform", pointTransform);
-    m_pointProgram->SetUniform("pointRadius", m_particleSizeRatio*m_commonParam->radius);
-    m_pointProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f)))); 
-    m_pointProgram->SetUniform("colorMin", m_minLegend);
-    m_pointProgram->SetUniform("colorMax", m_maxLegend);
-    m_pointProgram->SetUniform("cameraPos", m_cameraPos);
-    m_pointProgram->SetUniform("light.position", lightPos);
-    m_pointProgram->SetUniform("light.direction", lightDir);
-    m_pointProgram->SetUniform("light.cutoff", glm::vec2(   cosf(glm::radians(m_light.cutoff[0])),
-                                                            cosf(glm::radians(m_light.cutoff[0] + m_light.cutoff[1]))));
-    m_pointProgram->SetUniform("light.attenuation", GetAttenuationCoeff(m_light.distance));
-    m_pointProgram->SetUniform("light.ambient", m_light.ambient);
-    m_pointProgram->SetUniform("light.diffuse", m_light.diffuse);
-    m_pointProgram->SetUniform("light.specular", m_light.specular);
-
-    m_pointProgram->SetUniform("material.diffuse", m_materialBasic.diffuse);
-    m_pointProgram->SetUniform("material.specular", m_materialBasic.specular);
-    m_pointProgram->SetUniform("material.shininess", m_materialBasic.shininess);
-
+    // Draw Thickness on FrameBeffer
+    m_fluidThicknessProgram->Use(); 
+    m_fluidThicknessProgram->SetUniform("transform", proj*view);
+    m_fluidThicknessProgram->SetUniform("viewTransform", view);
+    m_fluidThicknessProgram->SetUniform("pointRadius", m_particleSizeRatio*m_commonParam->radius);
+    m_fluidThicknessProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f))));
     pointVertexLayout->Bind();
     glDrawArrays(GL_POINTS, 0, m_positions->size());
+
+    // Draw Depth on FrameBuffer
+    m_fluidDepthProgram->Use();
+    m_fluidDepthProgram->SetUniform("transform", proj*view);
+    m_fluidDepthProgram->SetUniform("projTransform", proj);
+    m_fluidDepthProgram->SetUniform("viewTransform", view);
+    m_fluidDepthProgram->SetUniform("pointRadius", m_particleSizeRatio*m_commonParam->radius);
+    m_fluidDepthProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f))));
+    pointVertexLayout->Bind();
+    glDrawArrays(GL_POINTS, 0, m_positions->size());
+
+
+    // Draw Depth on FrameBuffer
+    // m_pointProgram->Use();
+    // m_pointProgram->SetUniform("transform", proj*view);
+    // m_pointProgram->SetUniform("projTransform", proj);
+    // m_pointProgram->SetUniform("viewTransform", view);
+    // m_pointProgram->SetUniform("pointRadius", m_particleSizeRatio*m_commonParam->radius);
+    // m_pointProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f)))); 
+    // m_pointProgram->SetUniform("colorMin", m_minLegend);
+    // m_pointProgram->SetUniform("colorMax", m_maxLegend);
+    // m_pointProgram->SetUniform("cameraPos", m_cameraPos);
+    // m_pointProgram->SetUniform("light.position", lightPos);
+    // m_pointProgram->SetUniform("light.direction", lightDir);
+    // m_pointProgram->SetUniform("light.cutoff", glm::vec2(   cosf(glm::radians(m_light.cutoff[0])),
+    //                                                         cosf(glm::radians(m_light.cutoff[0] + m_light.cutoff[1]))));
+    // m_pointProgram->SetUniform("light.attenuation", GetAttenuationCoeff(m_light.distance));
+    // m_pointProgram->SetUniform("light.ambient", m_light.ambient);
+    // m_pointProgram->SetUniform("light.diffuse", m_light.diffuse);
+    // m_pointProgram->SetUniform("light.specular", m_light.specular);
+
+    // m_pointProgram->SetUniform("material.diffuse", m_materialBasic.diffuse);
+    // m_pointProgram->SetUniform("material.specular", m_materialBasic.specular);
+    // m_pointProgram->SetUniform("material.shininess", m_materialBasic.shininess);
+
+    // pointVertexLayout->Bind();
+    // glDrawArrays(GL_POINTS, 0, m_positions->size());
+
+
+
+    Framebuffer::BindToDefault();
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    m_fluidRenderProgram->Use();
+    m_fluidRenderProgram->SetUniform("transform",
+                                 glm::scale(glm::mat4(1.0f), glm::vec3(2.0f, 2.0f, 1.0f)));
+
+    glActiveTexture(GL_TEXTURE0);
+    m_framebuffer->GetColorAttachment()->Bind();
+    m_fluidRenderProgram->SetUniform("tex", 0);
+
+    glActiveTexture(GL_TEXTURE1);
+    m_framebuffer->GetDepthAttachment()->Bind();
+    m_fluidRenderProgram->SetUniform("texDepth", 1);
+    
+    // m_framebuffer->GetThickAttachment()->Bind();
+    // m_fluidRenderProgram->SetUniform("texThickness", 0);
+    
+    m_plane->Draw(m_fluidRenderProgram.get());
 }
 
 void Context::ProcessInput(GLFWwindow *window)
@@ -317,6 +344,12 @@ void Context::Reshape(int width, int height)
     m_width = width;
     m_height = height;
     glViewport(0, 0, m_width, m_height);
+
+    // m_framebuffer = Framebuffer::Create(
+    //     Texture::Create(width, height, GL_RGBA));
+
+    m_framebuffer = Framebuffer::Create(
+        Texture::Create(width, height, GL_RGBA), Texture::Create(width, height, GL_DEPTH_COMPONENT));
 }
 
 void Context::PressKey(int key, int scancode, int action, int mods)
