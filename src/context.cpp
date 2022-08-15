@@ -157,13 +157,6 @@ void Context::Render()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_PROGRAM_POINT_SIZE);  
 
-	// glEnable(GL_BLEND);
-	// glBlendFunc(GL_ONE, GL_ONE);
-	// glDepthMask(GL_FALSE);
-	// glEnable(GL_DEPTH_TEST);
-	// glDisable(GL_DEPTH_TEST);
-	// glEnable(GL_PROGRAM_POINT_SIZE);
-	// glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
     // opengl - render elements
     
@@ -187,12 +180,12 @@ void Context::Render()
     }
     else
     {
-        // after computing projection and view matrix
-        auto lightModelTransform = glm::translate(glm::mat4(1.0), m_light.position);
-        m_simpleProgram->Use();
-        m_simpleProgram->SetUniform("color", glm::vec4(m_light.ambient + m_light.diffuse, 1.0f));
-        m_simpleProgram->SetUniform("transform", proj * view * lightModelTransform);
-        m_box->Draw(m_simpleProgram.get());
+        // // after computing projection and view matrix
+        // auto lightModelTransform = glm::translate(glm::mat4(1.0), m_light.position);
+        // m_simpleProgram->Use();
+        // m_simpleProgram->SetUniform("color", glm::vec4(m_light.ambient + m_light.diffuse, 1.0f));
+        // m_simpleProgram->SetUniform("transform", proj * view * lightModelTransform);
+        // m_box->Draw(m_simpleProgram.get());
     }
 
     // Point Vertex Buffer 
@@ -203,27 +196,50 @@ void Context::Render()
         m_positions->data(), sizeof(glm::vec3), m_positions->size());
     pointVertexLayout->SetAttrib(0, 3, GL_FLOAT, false, sizeof(glm::vec3), 0);
 
-    // Draw Thickness on FrameBeffer
-    m_fluidThicknessProgram->Use(); 
-    m_fluidThicknessProgram->SetUniform("transform", proj*view);
-    m_fluidThicknessProgram->SetUniform("viewTransform", view);
-    m_fluidThicknessProgram->SetUniform("pointRadius", m_particleSizeRatio*m_commonParam->radius);
-    m_fluidThicknessProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f))));
-    pointVertexLayout->Bind();
-    glDrawArrays(GL_POINTS, 0, m_positions->size());
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        glDepthMask(GL_FALSE);
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
-    // Draw Depth on FrameBuffer
-    m_fluidDepthProgram->Use();
-    m_fluidDepthProgram->SetUniform("transform", proj*view);
-    m_fluidDepthProgram->SetUniform("projTransform", proj);
-    m_fluidDepthProgram->SetUniform("viewTransform", view);
-    m_fluidDepthProgram->SetUniform("pointRadius", m_particleSizeRatio*m_commonParam->radius);
-    m_fluidDepthProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f))));
-    pointVertexLayout->Bind();
-    glDrawArrays(GL_POINTS, 0, m_positions->size());
+        // Draw Thickness on FrameBeffer
+        m_fluidThicknessProgram->Use(); 
+        m_fluidThicknessProgram->SetUniform("transform", proj*view);
+        m_fluidThicknessProgram->SetUniform("viewTransform", view);
+        m_fluidThicknessProgram->SetUniform("pointRadius", m_particleSizeRatio*m_commonParam->radius);
+        m_fluidThicknessProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f))));
+        pointVertexLayout->Bind();
+        glDrawArrays(GL_POINTS, 0, m_positions->size());
 
 
-    // Draw Depth on FrameBuffer
+        glDepthMask(GL_TRUE);
+        glDisable(GL_BLEND);
+        glDisable(GL_PROGRAM_POINT_SIZE);
+    }
+
+    {
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_PROGRAM_POINT_SIZE);
+		glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+
+        // Draw Depth on FrameBuffer
+        m_fluidDepthProgram->Use();
+        m_fluidDepthProgram->SetUniform("transform", proj*view);
+        m_fluidDepthProgram->SetUniform("projTransform", proj);
+        m_fluidDepthProgram->SetUniform("viewTransform", view);
+        m_fluidDepthProgram->SetUniform("pointRadius", m_particleSizeRatio*m_commonParam->radius);
+        m_fluidDepthProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f))));
+        pointVertexLayout->Bind();
+        glDrawArrays(GL_POINTS, 0, m_positions->size());
+
+		glDisable(GL_PROGRAM_POINT_SIZE);
+    }
+
+
     // m_pointProgram->Use();
     // m_pointProgram->SetUniform("transform", proj*view);
     // m_pointProgram->SetUniform("projTransform", proj);
@@ -252,12 +268,27 @@ void Context::Render()
 
 
     Framebuffer::BindToDefault();
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     m_fluidRenderProgram->Use();
     m_fluidRenderProgram->SetUniform("transform",
                                  glm::scale(glm::mat4(1.0f), glm::vec3(2.0f, 2.0f, 1.0f)));
+    
+    m_fluidRenderProgram->SetUniform("iProjTransform", glm::inverse(proj));
+    m_fluidRenderProgram->SetUniform("iViewTransform", glm::inverse(view));
+    m_fluidRenderProgram->SetUniform("viewTransform", view);
+
+    m_fluidRenderProgram->SetUniform("light.position", lightPos);
+    m_fluidRenderProgram->SetUniform("light.direction", lightDir);
+    m_fluidRenderProgram->SetUniform("light.cutoff", glm::vec2(   cosf(glm::radians(m_light.cutoff[0])),
+                                                            cosf(glm::radians(m_light.cutoff[0] + m_light.cutoff[1]))));
+    m_fluidRenderProgram->SetUniform("light.attenuation", GetAttenuationCoeff(m_light.distance));
+    m_fluidRenderProgram->SetUniform("light.ambient", m_light.ambient);
+    m_fluidRenderProgram->SetUniform("light.diffuse", m_light.diffuse);
+    m_fluidRenderProgram->SetUniform("light.specular", m_light.specular);
 
     glActiveTexture(GL_TEXTURE0);
     m_framebuffer->GetColorAttachment()->Bind();
@@ -266,9 +297,6 @@ void Context::Render()
     glActiveTexture(GL_TEXTURE1);
     m_framebuffer->GetDepthAttachment()->Bind();
     m_fluidRenderProgram->SetUniform("texDepth", 1);
-    
-    // m_framebuffer->GetThickAttachment()->Bind();
-    // m_fluidRenderProgram->SetUniform("texThickness", 0);
     
     m_plane->Draw(m_fluidRenderProgram.get());
 }

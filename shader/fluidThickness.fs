@@ -1,5 +1,7 @@
 #version 330 core
 
+out vec4 fragColor;
+
 void main() {
     // Calculate Normal of the fragment Points
     float x =   (gl_PointCoord.x * 2.0 - 1.0);
@@ -11,5 +13,5 @@ void main() {
 
     pixelNorm = normalize(pixelNorm);
 
-	gl_FragColor = vec4(pixelNorm.z*0.05, 0.0, 0.0, 1.0);
+	fragColor = vec4(pixelNorm.z*0.025, 0.0, 0.0, 1.0);
 }

@@ -14,10 +14,10 @@ public :
         // ex) 
         // int64_t const initParticleNumber = voxelizer->CreateParticles(&g_buffer->m_positions);
  
-        g_buffer->m_commonParam.radius  = 0.01f;    
+        g_buffer->m_commonParam.radius  = 0.005f;    
         g_buffer->m_commonParam.diameter= g_buffer->m_commonParam.radius * 2.0f;    
         g_buffer->m_commonParam.H       = g_buffer->m_commonParam.diameter * 2.0f * 1.2f ; // 0.048f;      
-        g_buffer->m_commonParam.dt      = 0.001f;   
+        g_buffer->m_commonParam.dt      = 0.0005f;   
 
         g_buffer->m_commonParam.iterationNumber = 1;
 	    g_buffer->m_commonParam.relaxationParameter = powf(3.3f/g_buffer->m_commonParam.radius,2.0f);
@@ -33,12 +33,12 @@ public :
         
 
         //Box Generate
-        boxPoint WaterBox = boxPoint(glm::vec3(0.0f, -0.4f, -0.2f), glm::vec3(0.4f, 0.4f, 0.2f));
+        boxPoint WaterBox = boxPoint(glm::vec3(0.3f, -0.4f, -0.2f), glm::vec3(1.0f, -0.2f, 0.2f));
 
         int32_t xNum = (WaterBox.maxPoint.x - WaterBox.minPoint.x) / (2.0f * g_buffer->m_commonParam.radius);
         int32_t yNum = (WaterBox.maxPoint.y - WaterBox.minPoint.y) / (2.0f * g_buffer->m_commonParam.radius);
         int32_t zNum = (WaterBox.maxPoint.z - WaterBox.minPoint.z) / (2.0f * g_buffer->m_commonParam.radius);
-        int32_t const initParticleNumber = xNum*yNum*zNum;
+        int32_t initParticleNumber = xNum*yNum*zNum;
 
         g_buffer->m_positions.reserve(initParticleNumber);
         g_buffer->m_velocities.reserve(initParticleNumber);
