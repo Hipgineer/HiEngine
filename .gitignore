@@ -1,4 +1,3 @@
 build/*
 .vs/*
-src/HiPhysics/hiphysics*
 src/HiPhysics/references*
