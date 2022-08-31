@@ -21,6 +21,7 @@ ContextUPtr         g_context = nullptr;
 HiPhysicsUPtr       g_hiPhysics = nullptr;
 SimBufferPtr        g_buffer = nullptr;
 
+#include "scenes/sceneHelper.h"
 #include "scenes/scene.h"
 std::vector<Scene*> g_scenes;
 uint32_t            g_scene = 0;
@@ -251,6 +252,7 @@ int main(int argc, const char** argv)
 
     // Load All Scenes
     g_scenes.push_back(new BoxDrop("box_drop")); // new로 생성된 클래스는 포인터인가?
+    g_scenes.push_back(new SampleCase("sample_case")); // new로 생성된 클래스는 포인터인가?
 
     // Load Current Scene
     g_scene = 0;

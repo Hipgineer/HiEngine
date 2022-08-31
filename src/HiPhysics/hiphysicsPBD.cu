@@ -292,12 +292,12 @@ __global__ void keUpdateCorretedPosition(DeviceData dData,
 	{
 		dData.correctedPos[idx] = dData.correctedPos[idx] + dData.deltaPos[idx];
 		
-		if (dData.correctedPos[idx].x < dData.commonParam->AnalysisBox.minPoint.x) dData.correctedPos[idx].x = dData.commonParam->AnalysisBox.minPoint.x;
-		if (dData.correctedPos[idx].x > dData.commonParam->AnalysisBox.maxPoint.x) dData.correctedPos[idx].x = dData.commonParam->AnalysisBox.maxPoint.x;
-		if (dData.correctedPos[idx].y < dData.commonParam->AnalysisBox.minPoint.y) dData.correctedPos[idx].y = dData.commonParam->AnalysisBox.minPoint.y;
-		if (dData.correctedPos[idx].y > dData.commonParam->AnalysisBox.maxPoint.y) dData.correctedPos[idx].y = dData.commonParam->AnalysisBox.maxPoint.y;
-		if (dData.correctedPos[idx].z < dData.commonParam->AnalysisBox.minPoint.z) dData.correctedPos[idx].z = dData.commonParam->AnalysisBox.minPoint.z;
-		if (dData.correctedPos[idx].z > dData.commonParam->AnalysisBox.maxPoint.z) dData.correctedPos[idx].z = dData.commonParam->AnalysisBox.maxPoint.z;
+		if (dData.correctedPos[idx].x < dData.commonParam->AnalysisBox.minPoint.x + dData.commonParam->radius) dData.correctedPos[idx].x = dData.commonParam->AnalysisBox.minPoint.x + dData.commonParam->radius;
+		if (dData.correctedPos[idx].x > dData.commonParam->AnalysisBox.maxPoint.x - dData.commonParam->radius) dData.correctedPos[idx].x = dData.commonParam->AnalysisBox.maxPoint.x - dData.commonParam->radius;
+		if (dData.correctedPos[idx].y < dData.commonParam->AnalysisBox.minPoint.y + dData.commonParam->radius) dData.correctedPos[idx].y = dData.commonParam->AnalysisBox.minPoint.y + dData.commonParam->radius;
+		if (dData.correctedPos[idx].y > dData.commonParam->AnalysisBox.maxPoint.y - dData.commonParam->radius) dData.correctedPos[idx].y = dData.commonParam->AnalysisBox.maxPoint.y - dData.commonParam->radius;
+		if (dData.correctedPos[idx].z < dData.commonParam->AnalysisBox.minPoint.z + dData.commonParam->radius) dData.correctedPos[idx].z = dData.commonParam->AnalysisBox.minPoint.z + dData.commonParam->radius;
+		if (dData.correctedPos[idx].z > dData.commonParam->AnalysisBox.maxPoint.z - dData.commonParam->radius) dData.correctedPos[idx].z = dData.commonParam->AnalysisBox.maxPoint.z - dData.commonParam->radius;
 	}
 }
 
@@ -310,11 +310,11 @@ __global__ void keUpdateVelPos(DeviceData dData,
 		dData.velocities[idx] = (dData.correctedPos[idx] - dData.positions[idx])/dData.commonParam->dt;
 		dData.positions[idx]  =  dData.correctedPos[idx];
 		
-		if (dData.positions[idx].x < dData.commonParam->AnalysisBox.minPoint.x) dData.positions[idx].x = dData.commonParam->AnalysisBox.minPoint.x;
-		if (dData.positions[idx].x > dData.commonParam->AnalysisBox.maxPoint.x) dData.positions[idx].x = dData.commonParam->AnalysisBox.maxPoint.x;
-		if (dData.positions[idx].y < dData.commonParam->AnalysisBox.minPoint.y) dData.positions[idx].y = dData.commonParam->AnalysisBox.minPoint.y;
-		if (dData.positions[idx].y > dData.commonParam->AnalysisBox.maxPoint.y) dData.positions[idx].y = dData.commonParam->AnalysisBox.maxPoint.y;
-		if (dData.positions[idx].z < dData.commonParam->AnalysisBox.minPoint.z) dData.positions[idx].z = dData.commonParam->AnalysisBox.minPoint.z;
-		if (dData.positions[idx].z > dData.commonParam->AnalysisBox.maxPoint.z) dData.positions[idx].z = dData.commonParam->AnalysisBox.maxPoint.z;
+		if (dData.positions[idx].x < dData.commonParam->AnalysisBox.minPoint.x + dData.commonParam->radius) dData.positions[idx].x = dData.commonParam->AnalysisBox.minPoint.x + dData.commonParam->radius;
+		if (dData.positions[idx].x > dData.commonParam->AnalysisBox.maxPoint.x - dData.commonParam->radius) dData.positions[idx].x = dData.commonParam->AnalysisBox.maxPoint.x - dData.commonParam->radius;
+		if (dData.positions[idx].y < dData.commonParam->AnalysisBox.minPoint.y + dData.commonParam->radius) dData.positions[idx].y = dData.commonParam->AnalysisBox.minPoint.y + dData.commonParam->radius;
+		if (dData.positions[idx].y > dData.commonParam->AnalysisBox.maxPoint.y - dData.commonParam->radius) dData.positions[idx].y = dData.commonParam->AnalysisBox.maxPoint.y - dData.commonParam->radius;
+		if (dData.positions[idx].z < dData.commonParam->AnalysisBox.minPoint.z + dData.commonParam->radius) dData.positions[idx].z = dData.commonParam->AnalysisBox.minPoint.z + dData.commonParam->radius;
+		if (dData.positions[idx].z > dData.commonParam->AnalysisBox.maxPoint.z - dData.commonParam->radius) dData.positions[idx].z = dData.commonParam->AnalysisBox.maxPoint.z - dData.commonParam->radius;
 	}
 }

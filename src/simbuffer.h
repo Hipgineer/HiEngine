@@ -71,7 +71,7 @@ public :
 	std::vector<glm::vec3>  m_positions;
 	std::vector<glm::vec3>  m_velocities;
 	std::vector<int32_t>    m_phases;
-	std::vector<float>      m_colorValues;
+	std::vector<float>  	m_colorValues;
 
 	CommonParameters m_commonParam;
 	std::vector<PhaseParameters> m_phaseParam;

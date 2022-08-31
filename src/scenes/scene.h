@@ -15,6 +15,7 @@ public :
 };
 
 #include "boxDrop.h"
+#include "sampleCase.h"
 
 #endif // __SCENES_H__
 /*
