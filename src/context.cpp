@@ -73,17 +73,28 @@ void Context::RenderFluidThickness()
 
 }
 
-void Context::Render()
+void Context::DrawUI()
 {
     // imgui - setting GUI
     if (ImGui::Begin("ui window"))
     {
+
+        if (ImGui::BeginListBox("Scenes",ImVec2(0.0f, 5 * ImGui::GetTextLineHeightWithSpacing())))
+        {
+            for (int32_t sceneIdx = 0 ; sceneIdx < m_sceneList.size() ; ++sceneIdx)
+            {
+                const bool is_selected = (sceneIdx == m_selectedScene);
+                if (ImGui::Selectable(m_sceneList[sceneIdx], is_selected))
+                    m_selectedScene = sceneIdx;
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndListBox();
+        }
+
         if (ImGui::ColorEdit4("clear color", glm::value_ptr(m_clearColor)))
             glClearColor(m_clearColor.x, m_clearColor.y, m_clearColor.z, m_clearColor.w);
         ImGui::Separator();
-        // ImGui::DragFloat3("camera pos", glm::value_ptr(m_cameraPos), 0.01f);
-        // ImGui::DragFloat("camera yaw", &m_cameraYaw, 0.5f);
-        // ImGui::DragFloat("camera pitch", &m_cameraPitch, 0.5f, -89.0f, 89.0f);
         ImGui::DragFloat("camera speed", &m_cameraSpeedRatio, 0.001f, 0.001f, 100.0f);
         ImGui::Separator();
         if (ImGui::Button("reset camera"))
@@ -126,29 +137,15 @@ void Context::Render()
             ImGui::InputFloat("scorrDq", &m_commonParam->scorrDq,0.1f*m_commonParam->scorrDq, 0.2f*m_commonParam->scorrDq, "%.5f");
         }
         ImGui::DragFloat3("gravity",  glm::value_ptr(m_commonParam->gravity), 0.01f);
-        
-
-        // if (ImGui::CollapsingHeader("light", ImGuiTreeNodeFlags_DefaultOpen))
-        // {
-        //     ImGui::DragFloat3("l.position", glm::value_ptr(m_light.position), 0.01f);
-        //     ImGui::DragFloat3("l.direction", glm::value_ptr(m_light.direction), 0.01f);
-        //     ImGui::DragFloat2("l.cutoff", glm::value_ptr(m_light.cutoff), 0.5f, 0.0f, 180.0f);
-        //     ImGui::DragFloat("l.distance", &m_light.distance, 0.5f, 0.0f, 3000.0f);
-        //     ImGui::ColorEdit3("l.ambient", glm::value_ptr(m_light.ambient));
-        //     ImGui::ColorEdit3("l.diffuse", glm::value_ptr(m_light.diffuse));
-        //     ImGui::ColorEdit3("l.specular", glm::value_ptr(m_light.specular));
-        // }
-
-        // if (ImGui::CollapsingHeader("material", ImGuiTreeNodeFlags_DefaultOpen))
-        // {
-        //     ImGui::ColorEdit3("m.diffuse", glm::value_ptr(m_materialBasic.diffuse));
-        //     ImGui::ColorEdit3("m.specular", glm::value_ptr(m_materialBasic.specular));
-        //     ImGui::DragFloat("m.shininess", &m_materialBasic.shininess, 1.0f, 1.0f, 256.0f);
-        // }
 
         ImGui::Checkbox("flash light", &m_flashLightMode);
     }
     ImGui::End();
+}
+
+void Context::Render()
+{
+    DrawUI();
 
     m_framebuffer->Bind();
 

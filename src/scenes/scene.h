@@ -14,8 +14,9 @@ public :
 	const char* mName;
 };
 
-#include "boxDrop.h"
-#include "sampleCase.h"
+#include "sphereDrop.h"
+#include "sphereCollision.h"
+#include "damBreak.h"
 
 #endif // __SCENES_H__
 /*

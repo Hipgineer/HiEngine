@@ -251,8 +251,16 @@ int main(int argc, const char** argv)
 
 
     // Load All Scenes
-    g_scenes.push_back(new BoxDrop("box_drop")); // new로 생성된 클래스는 포인터인가?
-    g_scenes.push_back(new SampleCase("sample_case")); // new로 생성된 클래스는 포인터인가?
+    g_scenes.push_back(new SphereDrop("Sphere Drop"));
+    g_scenes.push_back(new SphereCollision("Sphere Collision"));
+    g_scenes.push_back(new DamBreak("Dam Break")); 
+    std::vector<Scene*>::iterator scenePtr;
+    for (scenePtr = g_scenes.begin(); scenePtr != g_scenes.end(); ++scenePtr)
+    {
+        g_context->m_sceneList.push_back((**scenePtr).mName);
+    }
+    
+    // g_scenes[0].nName
 
     // Load Current Scene
     g_scene = 0;

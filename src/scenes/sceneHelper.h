@@ -48,7 +48,6 @@ void createParticleGrid(boxPoint particleBox, glm::vec3 velocity, int32_t phaseI
     g_buffer->m_colorValues.shrink_to_fit();
 }
 
-
 void createParticleSphere(glm::vec3 centerPoint, float sphereRadius, glm::vec3 velocity, int32_t phaseID)
 {
     glm::vec3 AnalysisBoxMinPointConsideringRadius = g_buffer->m_commonParam.AnalysisBox.minPoint + g_buffer->m_commonParam.radius;

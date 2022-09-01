@@ -31,11 +31,13 @@ public:
 
     // animation
     int32_t m_selectedScene {0};
+    std::vector<const char*> m_sceneList;
 
 private:
     void RenderFluidDepth();
     void RenderFluidThickness();
     void RenderFluid();
+    void DrawUI();
     Context() {};
     bool Init();
     ProgramUPtr m_program;
@@ -71,7 +73,7 @@ private:
         glm::vec3 specular { glm::vec3(1.0f, 1.0f, 1.0f) };
     };
     Light m_light;
-    bool m_flashLightMode { true };
+    bool m_flashLightMode { false };
 
     // material parameters
     struct Material {
