@@ -49,4 +49,24 @@ __global__ void keUpdateVelPos(
     DeviceDataFluid dDataFluid,
     int64_t nParticles);
 
+
+
+__global__ void kePredictPositionCloth(
+    DeviceDataCloth dDataCloth,
+    DeviceSimParams dSimParam,
+    int64_t nParticles);
+
+__global__ void keComputeConstraintCloth(
+    DeviceDataCloth dDataCloth,
+    int64_t nParticles);
+
+__global__ void keUpdateVelPosCloth(
+    DeviceDataCloth dDataCloth,
+    DeviceSimParams dSimParam,
+    int64_t nParticles);
+
+__global__ void keGetRenderValuesCloth(
+    DeviceDataCloth dDataCloth,
+    int64_t nParticles);
+
 #endif // __HIPHYSICSPBD_H__

@@ -130,10 +130,22 @@ bool InitializeWithScene(int32_t sceneIndex) {
     SPDLOG_INFO("init number of particles : {}", g_buffer->GetNumParticles());
 
     // Initialize Scene into hiphysics engine
-    if (!g_hiPhysics->SetMemory(g_buffer))
+
+    if (g_scenes[g_scene]->mSceneType == StateOfMatter::FLUID)
     {
-        SPDLOG_ERROR("CUDA : failed to copy host to device.");
-        return false;
+        if (!g_hiPhysics->SetMemory(g_buffer))
+        {
+            SPDLOG_ERROR("CUDA : failed to copy host to device.");
+            return false;
+        }
+    }
+    else if (g_scenes[g_scene]->mSceneType == StateOfMatter::CLOTH)
+    {
+        if (!g_hiPhysics->SetMemoryCloth(g_buffer))
+        {
+            SPDLOG_ERROR("CUDA : failed to copy host to device.");
+            return false;
+        }
     }
 
     // 
@@ -298,16 +310,32 @@ int main(int argc, const char** argv)
         // {
         //     g_hiPhysics->SetDeviceMemory(g_buffer, idx);
         // }
-        
-        if (!g_pause || g_step)
-        {
-            g_hiPhysics->UpdateSolver(g_buffer);
-            g_step = false;
-        }
 
-        if (!g_hiPhysics->GetMemory(g_buffer)){
-            SPDLOG_ERROR("CUDA : failed to copy device to host.");
-            return -1;
+        if (g_scenes[g_scene]->mSceneType == StateOfMatter::FLUID)
+        {
+            if (!g_pause || g_step)
+            {
+                g_hiPhysics->UpdateSolver(g_buffer);
+                g_step = false;
+            }
+
+            if (!g_hiPhysics->GetMemory(g_buffer)){
+                SPDLOG_ERROR("CUDA : failed to copy device to host.");
+                return -1;
+            }
+        }
+        else if (g_scenes[g_scene]->mSceneType == StateOfMatter::CLOTH)
+        {
+            if (!g_pause || g_step)
+            {
+                g_hiPhysics->UpdateSolverCloth(g_buffer);
+                g_step = false;
+            }
+
+            if (!g_hiPhysics->GetMemoryCloth(g_buffer)){
+                SPDLOG_ERROR("CUDA : failed to copy device to host.");
+                return -1;
+            }
         }
         
         //TODO : BufferMapping - directly mapping opengl to HiPhysics data pointer? 

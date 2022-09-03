@@ -3,7 +3,7 @@
 class Cloth : public Scene
 {
 public :
-    Cloth(const char* name) : Scene(name) {}
+    Cloth(const char* name) : Scene(name, StateOfMatter::CLOTH) {}
 
 	virtual void Init()
     {

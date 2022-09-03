@@ -283,7 +283,6 @@ __global__ void kePredictPosition(DeviceDataFluid dDataFluid,
 	}
 }
 
-
 __global__ void keUpdateCorretedPosition(DeviceDataFluid dDataFluid, 
 						 				int64_t 	nParticles)
 {
@@ -316,5 +315,81 @@ __global__ void keUpdateVelPos(DeviceDataFluid dDataFluid,
 		if (dDataFluid.positions[idx].y > dDataFluid.commonParam->AnalysisBox.maxPoint.y - dDataFluid.commonParam->radius) dDataFluid.positions[idx].y = dDataFluid.commonParam->AnalysisBox.maxPoint.y - dDataFluid.commonParam->radius;
 		if (dDataFluid.positions[idx].z < dDataFluid.commonParam->AnalysisBox.minPoint.z + dDataFluid.commonParam->radius) dDataFluid.positions[idx].z = dDataFluid.commonParam->AnalysisBox.minPoint.z + dDataFluid.commonParam->radius;
 		if (dDataFluid.positions[idx].z > dDataFluid.commonParam->AnalysisBox.maxPoint.z - dDataFluid.commonParam->radius) dDataFluid.positions[idx].z = dDataFluid.commonParam->AnalysisBox.maxPoint.z - dDataFluid.commonParam->radius;
+	}
+}
+
+__global__ void kePredictPositionCloth(DeviceDataCloth dDataCloth, 
+								DeviceSimParams dSimParam,
+						 		int64_t 	nParticles)
+{
+	int64_t idx = threadIdx.x + blockIdx.x*blockDim.x;
+	if(idx < nParticles)
+	{
+		dDataCloth.velocities[idx] += dSimParam.commonParam->dt * dSimParam.commonParam->gravity;
+		dDataCloth.correctedPos[idx] = dDataCloth.positions[idx] + dSimParam.commonParam->dt*dDataCloth.velocities[idx];
+	}
+}
+
+__global__ void keComputeConstraintCloth(DeviceDataCloth dDataCloth,
+									int64_t 	nParticles)
+{
+	int32_t idx = threadIdx.x + blockIdx.x*blockDim.x;
+	if(idx < nParticles)
+	{
+		// // KernelVariables KV; 
+		// // for_NearParticles(ComputeConstraint, dDataFluid, KV); ==> 안에서 IID는 고정, JID는 내부에서 계산
+		// // dDataFluid.update;
+
+		// computeConstraintKernelVariables KV; 
+		// KV.IID					= idx;
+		// KV.densityI0			= dDataFluid.phaseParam[dDataFluid.phases[KV.IID]].density;
+		// KV.iDensityI0			= 1.0f/dDataFluid.phaseParam[dDataFluid.phases[KV.IID]].density;
+		// KV.H					= dDataFluid.commonParam->radius * 1.2f * 2.0f * 2.0f;
+
+		// int32_t ix = static_cast<int32_t>((v3MaxPosition.x - (dDataFluid.commonParam->radius) - v3MinPosition.x)/KV.H)+1;
+		// int32_t iy = static_cast<int32_t>((v3MaxPosition.y - (dDataFluid.commonParam->radius) - v3MinPosition.y)/KV.H)+1;
+		// int32_t iz = static_cast<int32_t>((v3MaxPosition.z - (dDataFluid.commonParam->radius) - v3MinPosition.z)/KV.H)+1;
+		// for (int32_t yyy = -1 ; yyy < 2  ; ++yyy)
+		// 	for (int32_t zzz = -1 ; zzz < 2  ; ++zzz)
+		// 		for (int32_t xxx = -1 ; xxx < 2  ; ++xxx)
+		// 		{
+		// 			int32_t nearGridID = dDataFluid.gridIndices[idx] + xxx + ix*zzz + ix*iz*yyy;
+		// 			if ( (nearGridID < 0) || (nearGridID > ix*iy*iz-1) ) continue;
+		// 			int32_t staJID = nearGridID == 0 ? 0 : dDataFluid.numPartInGrids[nearGridID-1];
+		// 			int32_t endJID = dDataFluid.numPartInGrids[nearGridID];
+		// 			for (int32_t JID = staJID; JID < endJID; ++JID)
+		// 			{
+		// 				// 모두 이런 형식일 것이므로!
+		// 				ComputeConstraint(JID, dDataFluid, KV);
+		// 			}
+		// 		}
+		// ComputeConstraintToGlobal(dDataFluid, KV);
+	}
+}
+
+__global__ void keUpdateVelPosCloth(DeviceDataCloth dDataCloth, 
+    								DeviceSimParams dSimParam,
+						 			int64_t 	nParticles)
+{
+	int64_t idx = threadIdx.x + blockIdx.x*blockDim.x;
+	if(idx < nParticles)
+	{
+		dDataCloth.velocities[idx] = (dDataCloth.correctedPos[idx] - dDataCloth.positions[idx])/dSimParam.commonParam->dt;
+		dDataCloth.positions[idx]  =  dDataCloth.correctedPos[idx];
+	}
+}
+
+
+__global__ void keGetRenderValuesCloth(DeviceDataCloth dDataCloth,
+								int64_t 	nParticles)
+{
+	int64_t idx = threadIdx.x + blockIdx.x*blockDim.x;
+	if(idx < nParticles)
+	{
+		// dDataCloth.colorValues[idx] = length(dDataCloth.velocities[idx]);
+		// dDataCloth.colorValues[idx] = static_cast<float>(dDataCloth.gridIndices[idx]);
+		// dDataCloth.colorValues[idx] = dDataCloth.constraints[idx];
+		dDataCloth.colorValues[idx] = dDataCloth.velocities[idx].x;
+		// dDataCloth.colorValues[idx] = length(dDataCloth.DeviceDataFluid[idx]);
 	}
 }

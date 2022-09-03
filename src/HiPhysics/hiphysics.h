@@ -92,11 +92,13 @@ public:
     
     bool SetMemory(SimBufferPtr simBuffer);
 
-    // bool SetMemory(SimBufferPtr simBuffer);
+    bool SetMemoryCloth(SimBufferPtr simBuffer);
     
     bool GetMemory(SimBufferPtr simBuffer);
     
     bool MemsetFromHost(SimBufferPtr simBuffer);
+    
+    bool MemsetFromHostCloth(SimBufferPtr simBuffer);
     
     // Physics Functions
 
@@ -115,6 +117,19 @@ public:
     bool GetRenderingVariable(SimBufferPtr simBuffer);
 
     // Cloth Functions
+
+	void UpdateSolverCloth(SimBufferPtr simBuffer);
+    
+    bool PredictPositionCloth(SimBufferPtr simBuffer);
+
+    bool ComputeConstraintCloth(SimBufferPtr simBuffer);
+    
+    bool UpdateVelPosCloth(SimBufferPtr simBuffer);
+    
+    bool GetRenderingVariableCloth(SimBufferPtr simBuffer);
+
+    bool GetMemoryCloth(SimBufferPtr simBuffer);
+
 
     uint32_t GetActiveCount() const { return m_numParticles; }
 
