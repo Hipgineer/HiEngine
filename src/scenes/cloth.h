@@ -22,19 +22,17 @@ public :
         g_buffer->m_commonParam.gravity             = glm::vec3(0.0f, -9.81f, 0.0f);
         g_buffer->m_commonParam.AnalysisBox         = boxPoint(glm::vec3(-0.7f, 0.0f, -0.4f), glm::vec3(0.7f, 2.0f, 0.4f));
 
-        PhaseParameters Water;
-        Water.density = 1000.0f; 
-        Water.color   = glm::vec3(1.0f, 0.0f, 0.0f);
-        g_buffer->m_phaseParam.push_back(Water); // phase : 0
-        
+        PhaseParameters Sweater;
+        Sweater.phaseType = StateOfMatter::CLOTH;
+        Sweater.density = 1000.0f; 
+        Sweater.color   = glm::vec3(0.0f, 0.0f, 0.0f);
+        g_buffer->m_phaseParam.push_back(Sweater);
+
         // Generate Planes
         float size = 0.3;
         glm::vec3 initVel = glm::vec3(0.0, 0.0, 0.0);
 
         glm::vec3 centerPoint = glm::vec3(0, 1.0, 0.0);
-        createParticlePlane(centerPoint, size, size, 1, initVel, 0);
-        
-        glm::vec3 centerPoint2 = glm::vec3(0, 0.5, 0.0);
-        createParticlePlane(centerPoint2, size, size, 0, initVel, 0);
+        createParticleCloth(centerPoint, size, size, 1, initVel, 0);
     }
 };

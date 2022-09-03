@@ -96,6 +96,8 @@ void Context::DrawUI()
             glClearColor(m_clearColor.x, m_clearColor.y, m_clearColor.z, m_clearColor.w);
         ImGui::Separator();
         ImGui::DragFloat("camera speed", &m_cameraSpeedRatio, 0.001f, 0.001f, 100.0f);
+        ImGui::DragFloat3("light position",  glm::value_ptr(m_light.position), 0.01f);
+
         ImGui::Separator();
         if (ImGui::Button("reset camera"))
         {
@@ -169,21 +171,7 @@ void Context::Render()
     
     // Light Settings
     glm::vec3 lightPos = m_light.position;
-    glm::vec3 lightDir = m_light.direction;
-    if (m_flashLightMode)
-    {
-        lightPos = m_cameraPos;
-        lightDir = m_cameraFront;
-    }
-    else
-    {
-        // // after computing projection and view matrix
-        // auto lightModelTransform = glm::translate(glm::mat4(1.0), m_light.position);
-        // m_simpleProgram->Use();
-        // m_simpleProgram->SetUniform("color", glm::vec4(m_light.ambient + m_light.diffuse, 1.0f));
-        // m_simpleProgram->SetUniform("transform", proj * view * lightModelTransform);
-        // m_box->Draw(m_simpleProgram.get());
-    }
+    glm::vec3 lightDir = (m_commonParam->AnalysisBox.minPoint + m_commonParam->AnalysisBox.maxPoint)*0.5f - m_light.position;
 
     // Point Vertex Buffer 
     // TODO Modulization
@@ -236,39 +224,25 @@ void Context::Render()
 		glDisable(GL_PROGRAM_POINT_SIZE);
     }
 
-
-    // m_pointProgram->Use();
-    // m_pointProgram->SetUniform("transform", proj*view);
-    // m_pointProgram->SetUniform("projTransform", proj);
-    // m_pointProgram->SetUniform("viewTransform", view);
-    // m_pointProgram->SetUniform("pointRadius", m_particleSizeRatio*m_commonParam->radius);
-    // m_pointProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f)))); 
-    // m_pointProgram->SetUniform("colorMin", m_minLegend);
-    // m_pointProgram->SetUniform("colorMax", m_maxLegend);
-    // m_pointProgram->SetUniform("cameraPos", m_cameraPos);
-    // m_pointProgram->SetUniform("light.position", lightPos);
-    // m_pointProgram->SetUniform("light.direction", lightDir);
-    // m_pointProgram->SetUniform("light.cutoff", glm::vec2(   cosf(glm::radians(m_light.cutoff[0])),
-    //                                                         cosf(glm::radians(m_light.cutoff[0] + m_light.cutoff[1]))));
-    // m_pointProgram->SetUniform("light.attenuation", GetAttenuationCoeff(m_light.distance));
-    // m_pointProgram->SetUniform("light.ambient", m_light.ambient);
-    // m_pointProgram->SetUniform("light.diffuse", m_light.diffuse);
-    // m_pointProgram->SetUniform("light.specular", m_light.specular);
-
-    // m_pointProgram->SetUniform("material.diffuse", m_materialBasic.diffuse);
-    // m_pointProgram->SetUniform("material.specular", m_materialBasic.specular);
-    // m_pointProgram->SetUniform("material.shininess", m_materialBasic.shininess);
-
-    // pointVertexLayout->Bind();
-    // glDrawArrays(GL_POINTS, 0, m_positions->size());
-
-
-
     Framebuffer::BindToDefault();
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    if (m_flashLightMode)
+    {
+        lightPos = m_cameraPos;
+        lightDir = m_cameraFront;
+    }
+    else
+    {
+        // after computing projection and view matrix
+        auto lightModelTransform = glm::translate(glm::mat4(1.0), m_light.position) * glm::scale(glm::mat4(1.0),glm::vec3(0.5));
+        m_simpleProgram->Use();
+        m_simpleProgram->SetUniform("color", glm::vec4(m_light.ambient + m_light.diffuse, 1.0f));
+        m_simpleProgram->SetUniform("transform", proj * view * lightModelTransform);
+        m_box->Draw(m_simpleProgram.get());
+    }
 
     m_fluidRenderProgram->Use();
     m_fluidRenderProgram->SetUniform("transform",
@@ -296,6 +270,10 @@ void Context::Render()
     m_fluidRenderProgram->SetUniform("texDepth", 1);
     
     m_plane->Draw(m_fluidRenderProgram.get());
+
+    // ------ 
+    
+
 }
 
 void Context::ProcessInput(GLFWwindow *window)

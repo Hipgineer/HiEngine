@@ -5,31 +5,34 @@
 #include "../core/vec3.h"
 #include "../src/common.h"
 #include "../src/simbuffer.h"
+struct DeviceSimParams{
 
+	CommonParameters* commonParam;
+    PhaseParameters* phaseParam;
 
-struct DeviceData{
+    DeviceSimParams() :        
+        commonParam(nullptr),
+        phaseParam(nullptr)
+        {};
+};
 
+struct DeviceParticleData{
+    // To search near particles.
     int32_t* gridIndices;      // Particle Grid Index
     int32_t* numPartInGrids;   // Particle Number of PArticles in each Grid
     int32_t* nearGridID;       // Near Grid IDs of each Grids
-
-    // Interchangable Data
+    
+    // Interchangable Data with Host
     float* colorValues;
     glm::vec3* positions;      // Particle Positions
     glm::vec3* velocities;     // Particle Velocities
     int32_t* phases;           // Particle Phase number
     
-    // Only for Device
-    float* constraints;        // Particle Constraints
-    float* lambdas;            // Particle Lambdas
+    // To compute next position
     glm::vec3* deltaPos;       // Particle Positions Displace 
     glm::vec3* correctedPos;   // Particle Corrected Positions
-    
-    // Parameters
-	CommonParameters* commonParam;
-    PhaseParameters* phaseParam;
-    //
-    DeviceData() : 
+
+    DeviceParticleData() : 
         gridIndices(nullptr),
         numPartInGrids(nullptr),
         nearGridID(nullptr),
@@ -39,12 +42,42 @@ struct DeviceData{
         velocities(nullptr),
         phases(nullptr),
 
+        deltaPos(nullptr),
+        correctedPos(nullptr)
+        {};  
+};
+
+struct DeviceDataFluid : DeviceParticleData{
+
+    // Only for Device
+    float* constraints;        // Particle Constraints
+    float* lambdas;            // Particle Lambdas
+    
+    // Parameters : TODO : move to simParameters
+	CommonParameters* commonParam;
+    PhaseParameters* phaseParam;
+    //
+    DeviceDataFluid() :
         constraints(nullptr),
         lambdas(nullptr),
-        correctedPos(nullptr),
         
         commonParam(nullptr),
         phaseParam(nullptr)
+        {};
+};
+
+
+struct DeviceDataCloth : DeviceParticleData{
+    int32_t* stretchID; 
+    int32_t* bendID; 
+    int32_t* shearID; 
+    int32_t* triangles;
+
+    DeviceDataCloth() :
+        stretchID(nullptr),
+        bendID(nullptr),
+        shearID(nullptr),
+        triangles(nullptr)
         {};
 };
 
@@ -58,6 +91,8 @@ public:
     bool ClearMemory();
     
     bool SetMemory(SimBufferPtr simBuffer);
+
+    // bool SetMemory(SimBufferPtr simBuffer);
     
     bool GetMemory(SimBufferPtr simBuffer);
     
@@ -79,6 +114,8 @@ public:
 
     bool GetRenderingVariable(SimBufferPtr simBuffer);
 
+    // Cloth Functions
+
     uint32_t GetActiveCount() const { return m_numParticles; }
 
 private:
@@ -91,7 +128,12 @@ private:
 
     uint32_t m_numFluidParticles { 0 };
 
-    DeviceData dm_Data {};
+    DeviceSimParams dm_SimParameters {};
+
+    DeviceDataFluid dm_DataFluid {};
+
+    DeviceDataCloth dm_DataCloth {};
+    
 };
 
 #endif // __HIPHYSICS_H__

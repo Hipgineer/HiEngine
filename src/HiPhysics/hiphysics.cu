@@ -12,19 +12,19 @@ bool HiPhysics::ClearMemory() {
 
     cudaError_t cudaError;
 
-    cudaFree(dm_Data.colorValues);
-    cudaFree(dm_Data.positions);
-    cudaFree(dm_Data.velocities);
-    cudaFree(dm_Data.phases);
-    cudaFree(dm_Data.constraints);
-    cudaFree(dm_Data.lambdas);
-    cudaFree(dm_Data.correctedPos);
-    cudaFree(dm_Data.deltaPos);
-    cudaFree(dm_Data.gridIndices);
-    cudaFree(dm_Data.numPartInGrids);
-    cudaFree(dm_Data.nearGridID);
-    cudaFree(dm_Data.commonParam);
-    cudaFree(dm_Data.phaseParam);
+    cudaFree(dm_DataFluid.colorValues);
+    cudaFree(dm_DataFluid.positions);
+    cudaFree(dm_DataFluid.velocities);
+    cudaFree(dm_DataFluid.phases);
+    cudaFree(dm_DataFluid.constraints);
+    cudaFree(dm_DataFluid.lambdas);
+    cudaFree(dm_DataFluid.correctedPos);
+    cudaFree(dm_DataFluid.deltaPos);
+    cudaFree(dm_DataFluid.gridIndices);
+    cudaFree(dm_DataFluid.numPartInGrids);
+    cudaFree(dm_DataFluid.nearGridID);
+    cudaFree(dm_DataFluid.commonParam);
+    cudaFree(dm_DataFluid.phaseParam);
 
     cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
@@ -43,101 +43,101 @@ bool HiPhysics::SetMemory(SimBufferPtr simBuffer) {
 
     //TODO : Dynamic allocation!
     // the number of particles is varying during the simulations!!
-    cudaMalloc(&(dm_Data.colorValues), count*sizeof(float));
-    cudaMemset(dm_Data.colorValues, 0, count*sizeof(float));
+    cudaMalloc(&(dm_DataFluid.colorValues), count*sizeof(float));
+    cudaMemset(dm_DataFluid.colorValues, 0, count*sizeof(float));
 	cudaDeviceSynchronize(); 
     cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
-        printf("MallocMemcpy dm_Data.colorValues %s\n",cudaGetErrorString(cudaError));
+        printf("MallocMemcpy dm_DataFluid.colorValues %s\n",cudaGetErrorString(cudaError));
         exit(1);
         return false;
   	}
 
-    cudaMalloc(&dm_Data.positions, count*sizeof(glm::vec3));
-	cudaMemcpy(dm_Data.positions, simBuffer->m_positions.data(), count*sizeof(glm::vec3), cudaMemcpyHostToDevice);
+    cudaMalloc(&dm_DataFluid.positions, count*sizeof(glm::vec3));
+	cudaMemcpy(dm_DataFluid.positions, simBuffer->m_positions.data(), count*sizeof(glm::vec3), cudaMemcpyHostToDevice);
 	cudaDeviceSynchronize(); 
     cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
-        printf("MallocMemcpy dm_Data.positions %s\n",cudaGetErrorString(cudaError));
+        printf("MallocMemcpy dm_DataFluid.positions %s\n",cudaGetErrorString(cudaError));
         exit(1);
         return false;
   	}
 
-    cudaMalloc(&dm_Data.velocities, count*sizeof(glm::vec3));
-	cudaMemcpy(dm_Data.velocities, simBuffer->m_velocities.data(), count*sizeof(glm::vec3), cudaMemcpyHostToDevice);
+    cudaMalloc(&dm_DataFluid.velocities, count*sizeof(glm::vec3));
+	cudaMemcpy(dm_DataFluid.velocities, simBuffer->m_velocities.data(), count*sizeof(glm::vec3), cudaMemcpyHostToDevice);
 	cudaDeviceSynchronize(); 
     cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
-        printf("MallocMemcpy dm_Data.velocities %s\n",cudaGetErrorString(cudaError));
+        printf("MallocMemcpy dm_DataFluid.velocities %s\n",cudaGetErrorString(cudaError));
         exit(1);
         return false;
   	}
 
-    cudaMalloc(&dm_Data.phases, count*sizeof(int32_t));
-	cudaMemcpy(dm_Data.phases, simBuffer->m_phases.data(), count*sizeof(int32_t), cudaMemcpyHostToDevice);
+    cudaMalloc(&dm_DataFluid.phases, count*sizeof(int32_t));
+	cudaMemcpy(dm_DataFluid.phases, simBuffer->m_phases.data(), count*sizeof(int32_t), cudaMemcpyHostToDevice);
 	cudaDeviceSynchronize(); 
     cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
-        printf("MallocMemcpy dm_Data.phases %s\n",cudaGetErrorString(cudaError));
+        printf("MallocMemcpy dm_DataFluid.phases %s\n",cudaGetErrorString(cudaError));
         exit(1);
         return false;
   	}
 
-    cudaMalloc(&dm_Data.constraints, count*sizeof(float));
-    cudaMemset(dm_Data.constraints, 0, count*sizeof(float));
+    cudaMalloc(&dm_DataFluid.constraints, count*sizeof(float));
+    cudaMemset(dm_DataFluid.constraints, 0, count*sizeof(float));
 	cudaDeviceSynchronize(); 
     cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
-        printf("MallocMemcpy dm_Data.constraints %s\n",cudaGetErrorString(cudaError));
+        printf("MallocMemcpy dm_DataFluid.constraints %s\n",cudaGetErrorString(cudaError));
         exit(1);
         return false;
   	}
 
-    cudaMalloc(&dm_Data.lambdas, count*sizeof(float));
-    cudaMemset(dm_Data.lambdas, 0, count*sizeof(float));
+    cudaMalloc(&dm_DataFluid.lambdas, count*sizeof(float));
+    cudaMemset(dm_DataFluid.lambdas, 0, count*sizeof(float));
 	cudaDeviceSynchronize(); 
     cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
-        printf("MallocMemcpy dm_Data.lambdas %s\n",cudaGetErrorString(cudaError));
+        printf("MallocMemcpy dm_DataFluid.lambdas %s\n",cudaGetErrorString(cudaError));
         exit(1);
         return false;
   	}
 
-    cudaMalloc(&dm_Data.correctedPos, count*sizeof(glm::vec3));
-    cudaMemset(dm_Data.correctedPos, 0, count*sizeof(glm::vec3));
+    cudaMalloc(&dm_DataFluid.correctedPos, count*sizeof(glm::vec3));
+    cudaMemset(dm_DataFluid.correctedPos, 0, count*sizeof(glm::vec3));
 	cudaDeviceSynchronize(); 
     cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
-        printf("MallocMemcpy dm_Data.correctedPos %s\n",cudaGetErrorString(cudaError));
+        printf("MallocMemcpy dm_DataFluid.correctedPos %s\n",cudaGetErrorString(cudaError));
         exit(1);
         return false;
   	}
 
-    cudaMalloc(&dm_Data.deltaPos, count*sizeof(glm::vec3));
-    cudaMemset(dm_Data.deltaPos, 0, count*sizeof(glm::vec3));
+    cudaMalloc(&dm_DataFluid.deltaPos, count*sizeof(glm::vec3));
+    cudaMemset(dm_DataFluid.deltaPos, 0, count*sizeof(glm::vec3));
 	cudaDeviceSynchronize(); 
     cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
-        printf("MallocMemcpy dm_Data.deltaPos %s\n",cudaGetErrorString(cudaError));
+        printf("MallocMemcpy dm_DataFluid.deltaPos %s\n",cudaGetErrorString(cudaError));
         exit(1);
         return false;
   	}
 
-    cudaMalloc(&dm_Data.gridIndices, count*sizeof(int32_t));
-    cudaMemset(dm_Data.gridIndices, 0, count*sizeof(int32_t));
+    cudaMalloc(&dm_DataFluid.gridIndices, count*sizeof(int32_t));
+    cudaMemset(dm_DataFluid.gridIndices, 0, count*sizeof(int32_t));
 	cudaDeviceSynchronize(); 
     cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
-        printf("MallocMemcpy dm_Data.gridIndices %s\n",cudaGetErrorString(cudaError));
+        printf("MallocMemcpy dm_DataFluid.gridIndices %s\n",cudaGetErrorString(cudaError));
         exit(1);
         return false;
   	}
@@ -149,45 +149,68 @@ bool HiPhysics::SetMemory(SimBufferPtr simBuffer) {
     int32_t ix = static_cast<int32_t>((maxPosition.x - (simBuffer->m_commonParam.radius) - minPosition.x)/H)+1;
     int32_t iy = static_cast<int32_t>((maxPosition.y - (simBuffer->m_commonParam.radius) - minPosition.y)/H)+1;
     int32_t iz = static_cast<int32_t>((maxPosition.z - (simBuffer->m_commonParam.radius) - minPosition.z)/H)+1;
-    cudaMalloc(&dm_Data.numPartInGrids, 1000*(ix)*(iy)*(iz)*sizeof(int32_t));
-    cudaMemset(dm_Data.numPartInGrids, 0, 1000*(ix)*(iy)*(iz)*sizeof(int32_t));
+    cudaMalloc(&dm_DataFluid.numPartInGrids, 1000*(ix)*(iy)*(iz)*sizeof(int32_t));
+    cudaMemset(dm_DataFluid.numPartInGrids, 0, 1000*(ix)*(iy)*(iz)*sizeof(int32_t));
 	cudaDeviceSynchronize(); 
     cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
-        printf("MallocMemcpy dm_Data.numPartInGrids %s\n",cudaGetErrorString(cudaError));
+        printf("MallocMemcpy dm_DataFluid.numPartInGrids %s\n",cudaGetErrorString(cudaError));
         exit(1);
         return false;
   	}
-    cudaMalloc(&dm_Data.nearGridID, 3*(ix+1)*(iy+1)*(iz+1)*27*sizeof(int32_t));
-    cudaMemset(dm_Data.nearGridID, 0, 3*(ix+1)*(iy+1)*(iz+1)*27*sizeof(int32_t));
+    cudaMalloc(&dm_DataFluid.nearGridID, 3*(ix+1)*(iy+1)*(iz+1)*27*sizeof(int32_t));
+    cudaMemset(dm_DataFluid.nearGridID, 0, 3*(ix+1)*(iy+1)*(iz+1)*27*sizeof(int32_t));
 	cudaDeviceSynchronize(); 
     cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
-        printf("MallocMemcpy dm_Data.nearGridID %s\n",cudaGetErrorString(cudaError));
-        exit(1);
-        return false;
-  	}
-
-    cudaMalloc(&dm_Data.commonParam, sizeof(CommonParameters));
-	cudaMemcpy(dm_Data.commonParam, &simBuffer->m_commonParam, sizeof(CommonParameters), cudaMemcpyHostToDevice);
-	cudaDeviceSynchronize(); 
-    cudaError = cudaGetLastError();
-	if (cudaError != cudaSuccess)
-  	{
-        printf("MallocMemcpy dm_Data.commonParam %s\n",cudaGetErrorString(cudaError));
+        printf("MallocMemcpy dm_DataFluid.nearGridID %s\n",cudaGetErrorString(cudaError));
         exit(1);
         return false;
   	}
 
-    cudaMalloc(&dm_Data.phaseParam, simBuffer->m_phaseParam.size()*sizeof(PhaseParameters));
-	cudaMemcpy(dm_Data.phaseParam, simBuffer->m_phaseParam.data(), simBuffer->m_phaseParam.size()*sizeof(PhaseParameters), cudaMemcpyHostToDevice);
+    cudaMalloc(&dm_DataFluid.commonParam, sizeof(CommonParameters));
+	cudaMemcpy(dm_DataFluid.commonParam, &simBuffer->m_commonParam, sizeof(CommonParameters), cudaMemcpyHostToDevice);
 	cudaDeviceSynchronize(); 
     cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
-        printf("MallocMemcpy dm_Data.phaseParam %s\n",cudaGetErrorString(cudaError));
+        printf("MallocMemcpy dm_DataFluid.commonParam %s\n",cudaGetErrorString(cudaError));
+        exit(1);
+        return false;
+  	}
+
+    cudaMalloc(&dm_DataFluid.phaseParam, simBuffer->m_phaseParam.size()*sizeof(PhaseParameters));
+	cudaMemcpy(dm_DataFluid.phaseParam, simBuffer->m_phaseParam.data(), simBuffer->m_phaseParam.size()*sizeof(PhaseParameters), cudaMemcpyHostToDevice);
+	cudaDeviceSynchronize(); 
+    cudaError = cudaGetLastError();
+	if (cudaError != cudaSuccess)
+  	{
+        printf("MallocMemcpy dm_DataFluid.phaseParam %s\n",cudaGetErrorString(cudaError));
+        exit(1);
+        return false;
+  	}
+
+
+    cudaMalloc(&dm_SimParameters.commonParam, sizeof(CommonParameters));
+	cudaMemcpy(dm_SimParameters.commonParam, &simBuffer->m_commonParam, sizeof(CommonParameters), cudaMemcpyHostToDevice);
+	cudaDeviceSynchronize(); 
+    cudaError = cudaGetLastError();
+	if (cudaError != cudaSuccess)
+  	{
+        printf("MallocMemcpy dm_SimParameters.commonParam %s\n",cudaGetErrorString(cudaError));
+        exit(1);
+        return false;
+  	}
+
+    cudaMalloc(&dm_SimParameters.phaseParam, simBuffer->m_phaseParam.size()*sizeof(PhaseParameters));
+	cudaMemcpy(dm_SimParameters.phaseParam, simBuffer->m_phaseParam.data(), simBuffer->m_phaseParam.size()*sizeof(PhaseParameters), cudaMemcpyHostToDevice);
+	cudaDeviceSynchronize(); 
+    cudaError = cudaGetLastError();
+	if (cudaError != cudaSuccess)
+  	{
+        printf("MallocMemcpy dm_SimParameters.phaseParam %s\n",cudaGetErrorString(cudaError));
         exit(1);
         return false;
   	}
@@ -200,7 +223,7 @@ bool HiPhysics::GetMemory(SimBufferPtr simBuffer) {
 
     uint64_t count = simBuffer->GetNumParticles();
 
-	cudaMemcpy(simBuffer->m_colorValues.data(), dm_Data.colorValues, count*sizeof(float),    cudaMemcpyDeviceToHost);
+	cudaMemcpy(simBuffer->m_colorValues.data(), dm_DataFluid.colorValues, count*sizeof(float),    cudaMemcpyDeviceToHost);
 	cudaDeviceSynchronize(); cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
@@ -208,7 +231,7 @@ bool HiPhysics::GetMemory(SimBufferPtr simBuffer) {
         exit(1);
         return false;
   	}
-	cudaMemcpy(simBuffer->m_positions.data(),   dm_Data.positions,   count*sizeof(glm::vec3),cudaMemcpyDeviceToHost);
+	cudaMemcpy(simBuffer->m_positions.data(),   dm_DataFluid.positions,   count*sizeof(glm::vec3),cudaMemcpyDeviceToHost);
 	cudaDeviceSynchronize(); cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
@@ -216,7 +239,7 @@ bool HiPhysics::GetMemory(SimBufferPtr simBuffer) {
         exit(1);
         return false;
   	}
-	cudaMemcpy(simBuffer->m_velocities.data(),  dm_Data.velocities,  count*sizeof(glm::vec3),cudaMemcpyDeviceToHost);
+	cudaMemcpy(simBuffer->m_velocities.data(),  dm_DataFluid.velocities,  count*sizeof(glm::vec3),cudaMemcpyDeviceToHost);
 	cudaDeviceSynchronize(); cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
@@ -224,7 +247,7 @@ bool HiPhysics::GetMemory(SimBufferPtr simBuffer) {
         exit(1);
         return false;
   	}
-	cudaMemcpy(simBuffer->m_phases.data(),      dm_Data.phases,      count*sizeof(int32_t),  cudaMemcpyDeviceToHost);
+	cudaMemcpy(simBuffer->m_phases.data(),      dm_DataFluid.phases,      count*sizeof(int32_t),  cudaMemcpyDeviceToHost);
 	cudaDeviceSynchronize(); cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
@@ -279,52 +302,52 @@ bool HiPhysics::MemsetFromHost(SimBufferPtr simBuffer) {
     cudaError_t cudaError;
     uint64_t count = simBuffer->GetNumParticles();
 
-	// cudaMemcpy(dm_Data.positions, simBuffer->m_positions.data(), count*sizeof(glm::vec3), cudaMemcpyHostToDevice);
+	// cudaMemcpy(dm_DataFluid.positions, simBuffer->m_positions.data(), count*sizeof(glm::vec3), cudaMemcpyHostToDevice);
 	// cudaDeviceSynchronize(); 
     // cudaError = cudaGetLastError();
 	// if (cudaError != cudaSuccess)
   	// {
-    //     printf("Memcpy dm_Data.positions %s\n",cudaGetErrorString(cudaError));
+    //     printf("Memcpy dm_DataFluid.positions %s\n",cudaGetErrorString(cudaError));
     //     exit(1);
     //     return false;
   	// }
 
-	// cudaMemcpy(dm_Data.velocities, simBuffer->m_velocities.data(), count*sizeof(glm::vec3), cudaMemcpyHostToDevice);
+	// cudaMemcpy(dm_DataFluid.velocities, simBuffer->m_velocities.data(), count*sizeof(glm::vec3), cudaMemcpyHostToDevice);
 	// cudaDeviceSynchronize(); 
     // cudaError = cudaGetLastError();
 	// if (cudaError != cudaSuccess)
   	// {
-    //     printf("Memcpy dm_Data.velocities %s\n",cudaGetErrorString(cudaError));
+    //     printf("Memcpy dm_DataFluid.velocities %s\n",cudaGetErrorString(cudaError));
     //     exit(1);
     //     return false;
   	// }
 
-	// cudaMemcpy(dm_Data.phases, simBuffer->m_phases.data(), count*sizeof(int32_t), cudaMemcpyHostToDevice);
+	// cudaMemcpy(dm_DataFluid.phases, simBuffer->m_phases.data(), count*sizeof(int32_t), cudaMemcpyHostToDevice);
 	// cudaDeviceSynchronize(); 
     // cudaError = cudaGetLastError();
 	// if (cudaError != cudaSuccess)
   	// {
-    //     printf("Memcpy dm_Data.phases %s\n",cudaGetErrorString(cudaError));
+    //     printf("Memcpy dm_DataFluid.phases %s\n",cudaGetErrorString(cudaError));
     //     exit(1);
     //     return false;
   	// }
     
-	cudaMemcpy(dm_Data.commonParam, &simBuffer->m_commonParam, sizeof(CommonParameters), cudaMemcpyHostToDevice);
+	cudaMemcpy(dm_DataFluid.commonParam, &simBuffer->m_commonParam, sizeof(CommonParameters), cudaMemcpyHostToDevice);
 	cudaDeviceSynchronize(); 
     cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
-        printf("Memcpy dm_Data.commonParam %s\n",cudaGetErrorString(cudaError));
+        printf("Memcpy dm_DataFluid.commonParam %s\n",cudaGetErrorString(cudaError));
         exit(1);
         return false;
   	}
 
-	cudaMemcpy(dm_Data.phaseParam, simBuffer->m_phaseParam.data(), simBuffer->m_phaseParam.size()*sizeof(PhaseParameters), cudaMemcpyHostToDevice);
+	cudaMemcpy(dm_DataFluid.phaseParam, simBuffer->m_phaseParam.data(), simBuffer->m_phaseParam.size()*sizeof(PhaseParameters), cudaMemcpyHostToDevice);
 	cudaDeviceSynchronize(); 
     cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
-        printf("Memcpy dm_Data.phaseParam %s\n",cudaGetErrorString(cudaError));
+        printf("Memcpy dm_DataFluid.phaseParam %s\n",cudaGetErrorString(cudaError));
         exit(1);
         return false;
   	}
@@ -337,7 +360,7 @@ bool HiPhysics::PredictPosition(SimBufferPtr simBuffer) {
     cudaError_t cudaError; // TODO : make it as a member variable.
 
     // 0. Predict Position
-    kePredictPosition<<< 1 +  m_numParticles/256, 256>>>(dm_Data, m_numParticles);
+    kePredictPosition<<< 1 +  m_numParticles/256, 256>>>(dm_DataFluid, m_numParticles);
 
     cudaError = cudaGetLastError();
     if (cudaError != cudaSuccess)
@@ -360,17 +383,17 @@ bool HiPhysics::ComputeGridIndices(SimBufferPtr simBuffer){
     int32_t ix = static_cast<int32_t>((maxPosition.x - (simBuffer->m_commonParam.radius) - minPosition.x)/H)+1;
     int32_t iy = static_cast<int32_t>((maxPosition.y - (simBuffer->m_commonParam.radius) - minPosition.y)/H)+1;
     int32_t iz = static_cast<int32_t>((maxPosition.z - (simBuffer->m_commonParam.radius) - minPosition.z)/H)+1;
-    cudaMemset(dm_Data.numPartInGrids, 0, (ix)*(iy)*(iz)*sizeof(int32_t));
+    cudaMemset(dm_DataFluid.numPartInGrids, 0, (ix)*(iy)*(iz)*sizeof(int32_t));
     cudaError = cudaGetLastError();
     if (cudaError != cudaSuccess)
     {
-        printf("clear(Memset) dm_Data.numPartInGrids %s\n",cudaGetErrorString(cudaError));
+        printf("clear(Memset) dm_DataFluid.numPartInGrids %s\n",cudaGetErrorString(cudaError));
         exit(1);
     }
     cudaDeviceSynchronize();
 
     // 1. assign Grid ID to Particles.
-    keComputeGridID<<< 1 +  m_numParticles/256, 256>>>(dm_Data, minPosition, maxPosition, m_numParticles);
+    keComputeGridID<<< 1 +  m_numParticles/256, 256>>>(dm_DataFluid, minPosition, maxPosition, m_numParticles);
     cudaError = cudaGetLastError();
     if (cudaError != cudaSuccess)
     {
@@ -381,7 +404,7 @@ bool HiPhysics::ComputeGridIndices(SimBufferPtr simBuffer){
 
 
     // 2. Count the number of Particles in each Grids.
-    keCountParticlesInGrids<<< 1 +  m_numParticles/256, 256>>>(dm_Data, minPosition, maxPosition, m_numParticles);
+    keCountParticlesInGrids<<< 1 +  m_numParticles/256, 256>>>(dm_DataFluid, minPosition, maxPosition, m_numParticles);
     cudaError = cudaGetLastError();
     if (cudaError != cudaSuccess)
     {
@@ -392,8 +415,8 @@ bool HiPhysics::ComputeGridIndices(SimBufferPtr simBuffer){
 
     // 3. Inclusive scan the number of particels in each Grids.
     {
-        thrust::device_vector<int32_t> temp(dm_Data.numPartInGrids,dm_Data.numPartInGrids + ix*iy*iz);
-        thrust::device_ptr<int32_t> dev_ptr = thrust::device_pointer_cast(dm_Data.numPartInGrids);
+        thrust::device_vector<int32_t> temp(dm_DataFluid.numPartInGrids,dm_DataFluid.numPartInGrids + ix*iy*iz);
+        thrust::device_ptr<int32_t> dev_ptr = thrust::device_pointer_cast(dm_DataFluid.numPartInGrids);
         thrust::inclusive_scan(temp.begin(), temp.end(), dev_ptr);
     }
 
@@ -404,53 +427,53 @@ bool HiPhysics::SortVariablesByIndices(SimBufferPtr simBuffer) {
     
     thrust::device_vector<int> indices(m_numParticles); 
     thrust::sequence(indices.begin(),indices.end());
-    thrust::sort_by_key(dm_Data.gridIndices,dm_Data.gridIndices+m_numParticles,indices.begin());
+    thrust::sort_by_key(dm_DataFluid.gridIndices,dm_DataFluid.gridIndices+m_numParticles,indices.begin());
 
     {
-        thrust::device_ptr<float> dev_ptr = thrust::device_pointer_cast(dm_Data.colorValues);
-        thrust::device_vector<float> temp(dm_Data.colorValues,dm_Data.colorValues+m_numParticles);
+        thrust::device_ptr<float> dev_ptr = thrust::device_pointer_cast(dm_DataFluid.colorValues);
+        thrust::device_vector<float> temp(dm_DataFluid.colorValues,dm_DataFluid.colorValues+m_numParticles);
         thrust::gather(indices.begin(),indices.end(), temp.data(), dev_ptr);
     }
 
     {
-        thrust::device_ptr<glm::vec3> dev_ptr = thrust::device_pointer_cast(dm_Data.positions);
-        thrust::device_vector<glm::vec3> temp(dm_Data.positions,dm_Data.positions+m_numParticles);
+        thrust::device_ptr<glm::vec3> dev_ptr = thrust::device_pointer_cast(dm_DataFluid.positions);
+        thrust::device_vector<glm::vec3> temp(dm_DataFluid.positions,dm_DataFluid.positions+m_numParticles);
         thrust::gather(indices.begin(),indices.end(), temp.data(), dev_ptr);
     }
     
     {
-        thrust::device_ptr<glm::vec3> dev_ptr = thrust::device_pointer_cast(dm_Data.velocities);
-        thrust::device_vector<glm::vec3> temp(dm_Data.velocities,dm_Data.velocities+m_numParticles);
+        thrust::device_ptr<glm::vec3> dev_ptr = thrust::device_pointer_cast(dm_DataFluid.velocities);
+        thrust::device_vector<glm::vec3> temp(dm_DataFluid.velocities,dm_DataFluid.velocities+m_numParticles);
         thrust::gather(indices.begin(),indices.end(), temp.data(), dev_ptr);
     }
 
     {
-        thrust::device_ptr<int32_t> dev_ptr = thrust::device_pointer_cast(dm_Data.phases);
-        thrust::device_vector<int32_t> temp(dm_Data.phases,dm_Data.phases+m_numParticles);
+        thrust::device_ptr<int32_t> dev_ptr = thrust::device_pointer_cast(dm_DataFluid.phases);
+        thrust::device_vector<int32_t> temp(dm_DataFluid.phases,dm_DataFluid.phases+m_numParticles);
         thrust::gather(indices.begin(),indices.end(), temp.data(), dev_ptr);
     }
 
     {
-        thrust::device_ptr<float> dev_ptr = thrust::device_pointer_cast(dm_Data.constraints);
-        thrust::device_vector<float> temp(dm_Data.constraints,dm_Data.constraints+m_numParticles);
+        thrust::device_ptr<float> dev_ptr = thrust::device_pointer_cast(dm_DataFluid.constraints);
+        thrust::device_vector<float> temp(dm_DataFluid.constraints,dm_DataFluid.constraints+m_numParticles);
         thrust::gather(indices.begin(),indices.end(), temp.data(), dev_ptr);
     }
 
     {
-        thrust::device_ptr<float> dev_ptr = thrust::device_pointer_cast(dm_Data.lambdas);
-        thrust::device_vector<float> temp(dm_Data.lambdas,dm_Data.lambdas+m_numParticles);
+        thrust::device_ptr<float> dev_ptr = thrust::device_pointer_cast(dm_DataFluid.lambdas);
+        thrust::device_vector<float> temp(dm_DataFluid.lambdas,dm_DataFluid.lambdas+m_numParticles);
         thrust::gather(indices.begin(),indices.end(), temp.data(), dev_ptr);
     }
     
     {
-        thrust::device_ptr<glm::vec3> dev_ptr = thrust::device_pointer_cast(dm_Data.deltaPos);
-        thrust::device_vector<glm::vec3> temp(dm_Data.deltaPos,dm_Data.deltaPos+m_numParticles);
+        thrust::device_ptr<glm::vec3> dev_ptr = thrust::device_pointer_cast(dm_DataFluid.deltaPos);
+        thrust::device_vector<glm::vec3> temp(dm_DataFluid.deltaPos,dm_DataFluid.deltaPos+m_numParticles);
         thrust::gather(indices.begin(),indices.end(), temp.data(), dev_ptr);
     }
 
     {
-        thrust::device_ptr<glm::vec3> dev_ptr = thrust::device_pointer_cast(dm_Data.correctedPos);
-        thrust::device_vector<glm::vec3> temp(dm_Data.correctedPos,dm_Data.correctedPos+m_numParticles);
+        thrust::device_ptr<glm::vec3> dev_ptr = thrust::device_pointer_cast(dm_DataFluid.correctedPos);
+        thrust::device_vector<glm::vec3> temp(dm_DataFluid.correctedPos,dm_DataFluid.correctedPos+m_numParticles);
         thrust::gather(indices.begin(),indices.end(), temp.data(), dev_ptr);
     }
 
@@ -465,7 +488,7 @@ bool HiPhysics::ComputeConstraint(SimBufferPtr simBuffer){
     glm::vec3 minPosition = min_element_xyz(&simBuffer->m_positions) - glm::vec3(simBuffer->m_commonParam.radius);
 
     // Compute Constraints
-    keComputeConstraint<<< 1 +  m_numParticles/256, 256>>>(dm_Data, minPosition, maxPosition, m_numParticles);
+    keComputeConstraint<<< 1 +  m_numParticles/256, 256>>>(dm_DataFluid, minPosition, maxPosition, m_numParticles);
     cudaError = cudaGetLastError();
     if (cudaError != cudaSuccess)
     {
@@ -475,7 +498,7 @@ bool HiPhysics::ComputeConstraint(SimBufferPtr simBuffer){
     cudaDeviceSynchronize();
 
     // Correct Positions
-    keComputePositionCorrection<<< 1 +  m_numParticles/256, 256>>>(dm_Data, minPosition, maxPosition, m_numParticles);
+    keComputePositionCorrection<<< 1 +  m_numParticles/256, 256>>>(dm_DataFluid, minPosition, maxPosition, m_numParticles);
     cudaError = cudaGetLastError();
     if (cudaError != cudaSuccess)
     {
@@ -485,7 +508,7 @@ bool HiPhysics::ComputeConstraint(SimBufferPtr simBuffer){
     cudaDeviceSynchronize();
 
     // Update Corrected Positions
-    keUpdateCorretedPosition<<< 1 +  m_numParticles/256, 256>>>(dm_Data, m_numParticles);
+    keUpdateCorretedPosition<<< 1 +  m_numParticles/256, 256>>>(dm_DataFluid, m_numParticles);
     cudaError = cudaGetLastError();
     if (cudaError != cudaSuccess)
     {
@@ -494,7 +517,7 @@ bool HiPhysics::ComputeConstraint(SimBufferPtr simBuffer){
     }
     cudaDeviceSynchronize();
 
-	cudaMemcpy(simBuffer->m_positions.data(),      dm_Data.correctedPos,      m_numParticles*sizeof(glm::vec3),  cudaMemcpyDeviceToHost);
+	cudaMemcpy(simBuffer->m_positions.data(),      dm_DataFluid.correctedPos,      m_numParticles*sizeof(glm::vec3),  cudaMemcpyDeviceToHost);
 	cudaDeviceSynchronize(); cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
   	{
@@ -510,7 +533,7 @@ bool HiPhysics::UpdateVelPos(SimBufferPtr simBuffer){
 
     cudaError_t cudaError; // TODO : 맴버변수화 
 
-    keUpdateVelPos<<< 1 +  m_numParticles/256, 256>>>(dm_Data, m_numParticles);
+    keUpdateVelPos<<< 1 +  m_numParticles/256, 256>>>(dm_DataFluid, m_numParticles);
 
     cudaError = cudaGetLastError();
     if (cudaError != cudaSuccess)
@@ -526,7 +549,7 @@ bool HiPhysics::GetRenderingVariable(SimBufferPtr simBuffer){
 
     cudaError_t cudaError;
 
-    keGetRenderValues<<< 1 +  m_numParticles/256, 256>>>(dm_Data, m_numParticles);
+    keGetRenderValues<<< 1 +  m_numParticles/256, 256>>>(dm_DataFluid, m_numParticles);
 
     cudaError = cudaGetLastError();
     if (cudaError != cudaSuccess)

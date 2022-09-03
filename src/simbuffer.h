@@ -47,10 +47,18 @@ struct CommonParameters {
 		{};
 };
 
+enum class StateOfMatter
+{
+	FLUID,
+	CLOTH
+};
+
 struct PhaseParameters {
+	StateOfMatter phaseType;
 	float density;
 	glm::vec3 color; 
 	PhaseParameters() : 
+		phaseType(StateOfMatter::FLUID),
 		density(1000.0f), 
 		color(glm::vec3(1.0f,0.0f,0.0f))
 	{};
@@ -63,6 +71,11 @@ public :
 	static SimBufferPtr Create();
 	int32_t GetNumParticles() { return m_positions.size(); }
 
+	int32_t GetNumStretchLines() { return m_stretchID.size()/2; }
+	int32_t GetNumBendLines() { return m_bendID.size()/2; }
+	int32_t GetNumShearLines() { return m_shearID.size()/2; }
+	int32_t GetNumTriangles() { return m_triangleID.size()/3; }
+
 private :
     SimBuffer() {};
 	bool Init();
@@ -72,6 +85,11 @@ public :
 	std::vector<glm::vec3>  m_velocities;
 	std::vector<int32_t>    m_phases;
 	std::vector<float>  	m_colorValues;
+
+	std::vector<int32_t> 	m_stretchID;
+	std::vector<int32_t> 	m_bendID;
+	std::vector<int32_t> 	m_shearID;
+	std::vector<int32_t> 	m_triangleID;
 
 	CommonParameters m_commonParam;
 	std::vector<PhaseParameters> m_phaseParam;
