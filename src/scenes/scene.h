@@ -17,6 +17,7 @@ public :
 #include "sphereDrop.h"
 #include "sphereCollision.h"
 #include "damBreak.h"
+#include "cloth.h"
 
 #endif // __SCENES_H__
 /*

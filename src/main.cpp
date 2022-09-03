@@ -254,6 +254,7 @@ int main(int argc, const char** argv)
     g_scenes.push_back(new SphereDrop("Sphere Drop"));
     g_scenes.push_back(new SphereCollision("Sphere Collision"));
     g_scenes.push_back(new DamBreak("Dam Break")); 
+    g_scenes.push_back(new Cloth("Cloth"));
     std::vector<Scene*>::iterator scenePtr;
     for (scenePtr = g_scenes.begin(); scenePtr != g_scenes.end(); ++scenePtr)
     {
