@@ -70,7 +70,6 @@ class SimBuffer
 public :
 	static SimBufferPtr Create();
 	int32_t GetNumParticles() { return m_positions.size(); }
-
 	int32_t GetNumStretchLines() { return m_stretchID.size()/2; }
 	int32_t GetNumBendLines() { return m_bendID.size()/2; }
 	int32_t GetNumShearLines() { return m_shearID.size()/2; }

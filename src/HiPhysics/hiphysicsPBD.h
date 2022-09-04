@@ -56,8 +56,24 @@ __global__ void kePredictPositionCloth(
     DeviceSimParams dSimParam,
     int64_t nParticles);
 
-__global__ void keComputeConstraintCloth(
+__global__ void keComputeStretchCloth(
     DeviceDataCloth dDataCloth,
+    DeviceSimParams dSimParam,
+    int64_t nStretchLine);
+
+__global__ void keComputeBendCloth(
+    DeviceDataCloth dDataCloth,
+    DeviceSimParams dSimParam,
+    int64_t nStretchLine);
+
+__global__ void keComputeShearCloth(
+    DeviceDataCloth dDataCloth,
+    DeviceSimParams dSimParam,
+    int64_t nStretchLine);
+
+__global__ void keUpdateCorretedPositionCloth(
+    DeviceDataCloth dDataCloth,
+    DeviceSimParams dSimParam,
     int64_t nParticles);
 
 __global__ void keUpdateVelPosCloth(

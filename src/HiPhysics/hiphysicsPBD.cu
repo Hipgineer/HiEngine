@@ -323,47 +323,171 @@ __global__ void kePredictPositionCloth(DeviceDataCloth dDataCloth,
 						 		int64_t 	nParticles)
 {
 	int64_t idx = threadIdx.x + blockIdx.x*blockDim.x;
+	
 	if(idx < nParticles)
 	{
-		dDataCloth.velocities[idx] += dSimParam.commonParam->dt * dSimParam.commonParam->gravity;
+		if ((idx == 0) || (idx == 13))
+			dDataCloth.velocities[idx] += glm::vec3(0.0f);
+		else
+			dDataCloth.velocities[idx] += dSimParam.commonParam->dt * dSimParam.commonParam->gravity;
+
 		dDataCloth.correctedPos[idx] = dDataCloth.positions[idx] + dSimParam.commonParam->dt*dDataCloth.velocities[idx];
+
+		// if (idx == 0)
+		// {
+		// 	dDataCloth.velocities[idx]  = glm::vec3(0.0);
+		// 	dDataCloth.correctedPos[idx]= dDataCloth.positions[idx];
+		// }
 	}
 }
 
-__global__ void keComputeConstraintCloth(DeviceDataCloth dDataCloth,
-									int64_t 	nParticles)
+__global__ void keComputeStretchCloth(DeviceDataCloth dDataCloth,
+    								DeviceSimParams dSimParam,
+									int64_t 	nStretchLines)
 {
 	int32_t idx = threadIdx.x + blockIdx.x*blockDim.x;
+
+	if(idx < nStretchLines)
+	{
+		int32_t id0 = dDataCloth.stretchID[2*idx];
+		int32_t id1 = dDataCloth.stretchID[2*idx + 1];
+
+        glm::vec3 p0 = dDataCloth.correctedPos[id0];
+        glm::vec3 p1 = dDataCloth.correctedPos[id1];
+        
+        glm::vec3 d = p1 - p0;
+		glm::vec3 norm = glm::normalize(d);
+		float len = glm::length(d);
+		float len0= 2.0f * dSimParam.commonParam->radius;
+
+        glm::vec3 dP = norm * 0.2f * (len - len0);
+		
+		if ((id0 == 0) || (id0 == 13))
+		{
+
+		}
+		else
+		{
+			atomicAdd(&dDataCloth.deltaPos[id0].x, dP.x);
+			atomicAdd(&dDataCloth.deltaPos[id0].y, dP.y);
+			atomicAdd(&dDataCloth.deltaPos[id0].z, dP.z);	
+		}
+
+		if ((id1 == 0) || (id1 == 13))
+		{
+			
+		}
+		else
+		{
+			atomicAdd(&dDataCloth.deltaPos[id1].y, -dP.y);
+			atomicAdd(&dDataCloth.deltaPos[id1].x, -dP.x);
+			atomicAdd(&dDataCloth.deltaPos[id1].z, -dP.z);
+		}
+
+
+	}
+}
+
+
+__global__ void keComputeBendCloth(DeviceDataCloth dDataCloth,
+    								DeviceSimParams dSimParam,
+									int64_t 	nBendLines)
+{
+	int32_t idx = threadIdx.x + blockIdx.x*blockDim.x;
+	if(idx < nBendLines)
+	{
+
+		int32_t id0 = dDataCloth.bendID[2*idx];
+		int32_t id1 = dDataCloth.bendID[2*idx + 1];
+
+        glm::vec3 p0 = dDataCloth.correctedPos[id0];
+        glm::vec3 p1 = dDataCloth.correctedPos[id1];
+        
+        glm::vec3 d = p1 - p0;
+		glm::vec3 norm = glm::normalize(d);
+		float len = glm::length(d);
+		float len0= 4.0f * dSimParam.commonParam->radius;
+
+
+        glm::vec3 dP = norm * 0.2f * (len - len0);
+		
+		if ((id0 == 0) || (id0 == 13))
+		{
+
+		}
+		else
+		{
+			atomicAdd(&dDataCloth.deltaPos[id0].x, dP.x);
+			atomicAdd(&dDataCloth.deltaPos[id0].y, dP.y);
+			atomicAdd(&dDataCloth.deltaPos[id0].z, dP.z);	
+		}
+
+		if ((id1 == 0) || (id1 == 13))
+		{
+			
+		}
+		else
+		{
+			atomicAdd(&dDataCloth.deltaPos[id1].y, -dP.y);
+			atomicAdd(&dDataCloth.deltaPos[id1].x, -dP.x);
+			atomicAdd(&dDataCloth.deltaPos[id1].z, -dP.z);
+		}
+	}
+}
+
+
+__global__ void keComputeShearCloth(DeviceDataCloth dDataCloth,
+    								DeviceSimParams dSimParam,
+									int64_t 	nShearLines)
+{
+	int32_t idx = threadIdx.x + blockIdx.x*blockDim.x;
+	if(idx < nShearLines)
+	{
+
+		int32_t id0 = dDataCloth.shearID[2*idx];
+		int32_t id1 = dDataCloth.shearID[2*idx + 1];
+
+        glm::vec3 p0 = dDataCloth.correctedPos[id0];
+        glm::vec3 p1 = dDataCloth.correctedPos[id1];
+        
+        glm::vec3 d = p1 - p0;
+		glm::vec3 norm = glm::normalize(d);
+		float len = glm::length(d);
+		float len0= sqrt(2.0f) * 2.0f * dSimParam.commonParam->radius;
+
+        glm::vec3 dP = norm * 0.2f * (len - len0);
+		
+		if ((id0 == 0) || (id0 == 13))
+		{
+
+		}
+		else
+		{
+			atomicAdd(&dDataCloth.deltaPos[id0].x, dP.x);
+			atomicAdd(&dDataCloth.deltaPos[id0].y, dP.y);
+			atomicAdd(&dDataCloth.deltaPos[id0].z, dP.z);	
+		}
+
+		if ((id1 == 0) || (id1 == 13))
+		{
+			
+		}
+		else
+		{
+			atomicAdd(&dDataCloth.deltaPos[id1].y, -dP.y);
+			atomicAdd(&dDataCloth.deltaPos[id1].x, -dP.x);
+			atomicAdd(&dDataCloth.deltaPos[id1].z, -dP.z);
+		}
+	}
+}
+
+__global__ void keUpdateCorretedPositionCloth(DeviceDataCloth dDataCloth, DeviceSimParams dSimParam, int64_t nParticles)
+{
+	int64_t idx = threadIdx.x + blockIdx.x*blockDim.x;
 	if(idx < nParticles)
 	{
-		// // KernelVariables KV; 
-		// // for_NearParticles(ComputeConstraint, dDataFluid, KV); ==> 안에서 IID는 고정, JID는 내부에서 계산
-		// // dDataFluid.update;
-
-		// computeConstraintKernelVariables KV; 
-		// KV.IID					= idx;
-		// KV.densityI0			= dDataFluid.phaseParam[dDataFluid.phases[KV.IID]].density;
-		// KV.iDensityI0			= 1.0f/dDataFluid.phaseParam[dDataFluid.phases[KV.IID]].density;
-		// KV.H					= dDataFluid.commonParam->radius * 1.2f * 2.0f * 2.0f;
-
-		// int32_t ix = static_cast<int32_t>((v3MaxPosition.x - (dDataFluid.commonParam->radius) - v3MinPosition.x)/KV.H)+1;
-		// int32_t iy = static_cast<int32_t>((v3MaxPosition.y - (dDataFluid.commonParam->radius) - v3MinPosition.y)/KV.H)+1;
-		// int32_t iz = static_cast<int32_t>((v3MaxPosition.z - (dDataFluid.commonParam->radius) - v3MinPosition.z)/KV.H)+1;
-		// for (int32_t yyy = -1 ; yyy < 2  ; ++yyy)
-		// 	for (int32_t zzz = -1 ; zzz < 2  ; ++zzz)
-		// 		for (int32_t xxx = -1 ; xxx < 2  ; ++xxx)
-		// 		{
-		// 			int32_t nearGridID = dDataFluid.gridIndices[idx] + xxx + ix*zzz + ix*iz*yyy;
-		// 			if ( (nearGridID < 0) || (nearGridID > ix*iy*iz-1) ) continue;
-		// 			int32_t staJID = nearGridID == 0 ? 0 : dDataFluid.numPartInGrids[nearGridID-1];
-		// 			int32_t endJID = dDataFluid.numPartInGrids[nearGridID];
-		// 			for (int32_t JID = staJID; JID < endJID; ++JID)
-		// 			{
-		// 				// 모두 이런 형식일 것이므로!
-		// 				ComputeConstraint(JID, dDataFluid, KV);
-		// 			}
-		// 		}
-		// ComputeConstraintToGlobal(dDataFluid, KV);
+		dDataCloth.correctedPos[idx] = dDataCloth.correctedPos[idx] + dDataCloth.deltaPos[idx];
+		dDataCloth.deltaPos[idx] = glm::vec3(0.0f);
 	}
 }
 
@@ -374,6 +498,7 @@ __global__ void keUpdateVelPosCloth(DeviceDataCloth dDataCloth,
 	int64_t idx = threadIdx.x + blockIdx.x*blockDim.x;
 	if(idx < nParticles)
 	{
+		// if (idx == 0) return;
 		dDataCloth.velocities[idx] = (dDataCloth.correctedPos[idx] - dDataCloth.positions[idx])/dSimParam.commonParam->dt;
 		dDataCloth.positions[idx]  =  dDataCloth.correctedPos[idx];
 	}
