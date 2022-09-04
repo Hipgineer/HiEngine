@@ -3,6 +3,7 @@ Under Developing...
 
 ## Key Features
 - PBF fluid simulator
+- PBD cloth simulator
 - CUDA Acceleration
 - Screen Space Fluid Rendering (Green, 2010)
 
