@@ -277,6 +277,7 @@ int main(int argc, const char** argv)
 
     // Load Current Scene
     g_scene = 0;
+    g_context->m_reloadScene = false;
     InitializeWithScene(g_scene);
 
     // Main Loop
@@ -284,17 +285,18 @@ int main(int argc, const char** argv)
     while (!glfwWindowShouldClose(g_window)) {
 
         // Change Scene
-        if (g_context->m_selectedScene != -1)
+        // if (g_context->m_selectedScene != -1)
+        if (g_context->m_reloadScene)
         {
+            g_context->m_reloadScene = false;
             printf("Scene Reload");
-            g_scene = g_context->m_selectedScene;
-            g_context->m_selectedScene = -1;
 
             // Clear Solver and SimBuffer
             g_hiPhysics->ClearMemory();
             g_hiPhysics.reset(); // or g_solver = nullptr;
             g_buffer.reset();
             
+            g_scene = g_context->m_selectedScene;
             // Initialize Solver and SimBuffer
             InitializeWithScene(g_scene);
 

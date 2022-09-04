@@ -85,9 +85,13 @@ void Context::DrawUI()
             {
                 const bool is_selected = (sceneIdx == m_selectedScene);
                 if (ImGui::Selectable(m_sceneList[sceneIdx], is_selected))
+                {
                     m_selectedScene = sceneIdx;
+                    m_reloadScene = true;
+                }
                 if (is_selected)
                     ImGui::SetItemDefaultFocus();
+                    
             }
             ImGui::EndListBox();
         }
@@ -108,7 +112,8 @@ void Context::DrawUI()
         }
         if (ImGui::Button("Reload Scene"))
         {
-            m_selectedScene = 0;
+            // m_selectedScene = 0;
+            m_reloadScene = true;
         }
         
         ImGui::Separator();
@@ -148,6 +153,7 @@ void Context::DrawUI()
 void Context::Render()
 {
     DrawUI();
+
 
     m_framebuffer->Bind();
 

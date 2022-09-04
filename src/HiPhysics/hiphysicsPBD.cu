@@ -342,8 +342,8 @@ __global__ void kePredictPositionCloth(DeviceDataCloth dDataCloth,
 }
 
 __global__ void keComputeStretchCloth(DeviceDataCloth dDataCloth,
-    								DeviceSimParams dSimParam,
-									int64_t 	nStretchLines)
+    								  DeviceSimParams dSimParam,
+									  int64_t 	nStretchLines)
 {
 	int32_t idx = threadIdx.x + blockIdx.x*blockDim.x;
 

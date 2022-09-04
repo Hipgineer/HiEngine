@@ -294,8 +294,8 @@ bool HiPhysics::SetMemoryCloth(SimBufferPtr simBuffer) {
         return false;
   	}
 
-    cudaMalloc(&dm_DataCloth.shearID, nShearLines*sizeof(int32_t));
-    cudaMemcpy(dm_DataCloth.shearID, simBuffer->m_shearID.data(), nShearLines*sizeof(int32_t), cudaMemcpyHostToDevice);
+    cudaMalloc(&dm_DataCloth.shearID, 2*nShearLines*sizeof(int32_t));
+    cudaMemcpy(dm_DataCloth.shearID, simBuffer->m_shearID.data(), 2*nShearLines*sizeof(int32_t), cudaMemcpyHostToDevice);
 	cudaDeviceSynchronize(); 
     cudaError = cudaGetLastError();
 	if (cudaError != cudaSuccess)
@@ -799,14 +799,14 @@ bool HiPhysics::ComputeConstraintCloth(SimBufferPtr simBuffer){
     }
     cudaDeviceSynchronize();
     
-    // keComputeShearCloth<<< 1 +  simBuffer->GetNumShearLines()/256, 256>>>(dm_DataCloth, dm_SimParameters, simBuffer->GetNumShearLines());
-    // cudaError = cudaGetLastError();
-    // if (cudaError != cudaSuccess)
-    // {
-    //     printf("Error at HiPhysics::ComputeConstraint-keComputeConstraintCloth  %s\n",cudaGetErrorString(cudaError));
-    //     exit(1);
-    // }
-    // cudaDeviceSynchronize();
+    keComputeShearCloth<<< 1 +  simBuffer->GetNumShearLines()/256, 256>>>(dm_DataCloth, dm_SimParameters, simBuffer->GetNumShearLines());
+    cudaError = cudaGetLastError();
+    if (cudaError != cudaSuccess)
+    {
+        printf("Error at HiPhysics::ComputeConstraint-keComputeConstraintCloth  %s\n",cudaGetErrorString(cudaError));
+        exit(1);
+    }
+    cudaDeviceSynchronize();
 
     // Update Corrected Positions
     keUpdateCorretedPositionCloth<<< 1 +  m_numParticles/256, 256>>>(dm_DataCloth, dm_SimParameters, m_numParticles);

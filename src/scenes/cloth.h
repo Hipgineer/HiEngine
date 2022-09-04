@@ -9,10 +9,10 @@ public :
     {
         SPDLOG_INFO("Cloth Initializing");
         
-        g_buffer->m_commonParam.radius  = 0.01f;    
+        g_buffer->m_commonParam.radius  = 0.001f;    
         g_buffer->m_commonParam.diameter= g_buffer->m_commonParam.radius * 2.0f;    
         g_buffer->m_commonParam.H       = g_buffer->m_commonParam.diameter * 2.0f * 1.2f ; // 0.048f;      
-        g_buffer->m_commonParam.dt      = 0.0005f;   
+        g_buffer->m_commonParam.dt      = 0.001f;    
 
         g_buffer->m_commonParam.iterationNumber = 30;
 	    g_buffer->m_commonParam.relaxationParameter = powf(3.3f/g_buffer->m_commonParam.radius,2.0f);
