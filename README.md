@@ -1,6 +1,12 @@
 # HiEngine
 Hipgineer's Physics-based Simulation Engine.
 
+## Examples
+
+*Dam Break* | *Sphere Drop* | *Cloth*
+--- | --- | ---
+![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_dambreak.gif) | ![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_spheredrop.gif) | ![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_cloth.gif)
+
 ## Key Features
 - PBF fluid simulator
 - PBD cloth simulator
@@ -37,10 +43,3 @@ Hipgineer's Physics-based Simulation Engine.
 4. build and run this code. check your scene in the ui scene list
 
 ![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/myTestScene.png)
-
-
-## Examples
-
-*Dam Break* | *Sphere Drop* | *Cloth*
---- | --- | ---
-![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_dambreak.gif) | ![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_spheredrop.gif) | ![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_cloth.gif)
