@@ -1,5 +1,5 @@
 # HiEngine
-Under Developing...
+Hipgineer's Physics-based Simulation Engine.
 
 ## Key Features
 - PBF fluid simulator
@@ -41,14 +41,6 @@ Under Developing...
 
 ## Examples
 
-*Dam Break*
-
-![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_dambreak.gif)
-
-*Sphere Drop*
-
-![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_spheredrop.gif)
-
-*Cloth (under developing)*
-
-![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_cloth.gif)
+*Dam Break* | *Sphere Drop* | *Cloth*
+--- | --- | ---
+![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_dambreak.gif) | ![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_spheredrop.gif) | ![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_cloth.gif)
