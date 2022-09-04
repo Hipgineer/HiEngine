@@ -47,3 +47,7 @@ Under Developing...
 *Sphere Drop*
 
 ![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_spheredrop.gif)
+
+*Cloth (under developing)*
+
+![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_cloth.gif)

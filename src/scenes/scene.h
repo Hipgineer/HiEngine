@@ -8,9 +8,11 @@ class Scene
 {
 public :
     Scene(const char* name) : mName(name) {}
+    Scene(const char* name, StateOfMatter sceneType) : mName(name), mSceneType(sceneType) {}
 
 	virtual void Init() = 0;
     
+    StateOfMatter mSceneType {StateOfMatter::FLUID};
 	const char* mName;
 };
 

@@ -22,6 +22,7 @@ public :
         g_buffer->m_commonParam.AnalysisBox         = boxPoint(glm::vec3(-0.5f, -0.0f, -0.2f), glm::vec3(0.5f, 1.0f, 0.2f));
 
         PhaseParameters Water;
+        Water.phaseType = StateOfMatter::FLUID;
         Water.density = 1000.0f; 
         Water.color   = glm::vec3(1.0f, 0.0f, 0.0f);
         g_buffer->m_phaseParam.push_back(Water); // phase : 0

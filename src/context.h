@@ -31,6 +31,7 @@ public:
 
     // animation
     int32_t m_selectedScene {0};
+    bool m_reloadScene {false};
     std::vector<const char*> m_sceneList;
 
 private:
