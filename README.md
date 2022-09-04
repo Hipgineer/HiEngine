@@ -1,8 +1,6 @@
 # HiEngine
 Hipgineer's Physics-based Simulation Engine.
 
-## Examples
-
 *Dam Break* | *Sphere Drop* | *Cloth*
 --- | --- | ---
 ![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_dambreak.gif) | ![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_spheredrop.gif) | ![Alt Text](https://github.com/Hipgineer/HiEngine/blob/main/doc/img/ex_cloth.gif)
