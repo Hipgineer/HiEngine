@@ -162,17 +162,18 @@ void createParticleCloth(glm::vec3 center, float size1, float size2, int32_t axi
 
     int32_t num1 = static_cast<int32_t>( size1 / (2.0f * g_buffer->m_commonParam.radius)) - 1;
     int32_t num2 = static_cast<int32_t>( size2 / (2.0f * g_buffer->m_commonParam.radius)) - 1;
-    int32_t totalParticleNumber = num1*num2 + g_buffer->GetNumParticles();
+    int32_t nParticlesBeforeAdded = g_buffer->GetNumParticles();
 
+    int32_t nParticles = num1*num2;
     int32_t nStretchLines = (num1-1) * (num2) + (num1) * (num2-1);
     int32_t nBendLines    = (num1-2) * (num2) + (num1) * (num2-2) ;
     int32_t nShearLines   = 2 * (num1-1) * (num2-1);
     int32_t nTriangles    = 2 * (num1-1) * (num2-1);
 
-    g_buffer->m_positions.reserve(totalParticleNumber);
-    g_buffer->m_velocities.reserve(totalParticleNumber);
-    g_buffer->m_phases.reserve(totalParticleNumber);
-    g_buffer->m_colorValues.reserve(totalParticleNumber);
+    g_buffer->m_positions.reserve(nParticles + g_buffer->GetNumParticles());
+    g_buffer->m_velocities.reserve(nParticles + g_buffer->GetNumParticles());
+    g_buffer->m_phases.reserve(nParticles + g_buffer->GetNumParticles());
+    g_buffer->m_colorValues.reserve(nParticles + g_buffer->GetNumParticles());
 
     g_buffer->m_stretchID.reserve(2 * (nStretchLines + g_buffer->GetNumStretchLines()) );
     g_buffer->m_bendID.reserve(2 * (nBendLines  + g_buffer->GetNumBendLines()) );       
@@ -211,14 +212,14 @@ void createParticleCloth(glm::vec3 center, float size1, float size2, int32_t axi
         {   
             if (jj < num2 - 1)
             {
-                g_buffer->m_stretchID.push_back(ii*num2 + jj);
-                g_buffer->m_stretchID.push_back(ii*num2 + jj + 1);
+                g_buffer->m_stretchID.push_back(nParticlesBeforeAdded + ii*num2 + jj);
+                g_buffer->m_stretchID.push_back(nParticlesBeforeAdded + ii*num2 + jj + 1);
                 ++tmpN;
             }
             if (ii < num1 - 1)
             {
-                g_buffer->m_stretchID.push_back(ii*num2 + jj);
-                g_buffer->m_stretchID.push_back((ii+1)*num2 + jj);
+                g_buffer->m_stretchID.push_back(nParticlesBeforeAdded + ii*num2 + jj);
+                g_buffer->m_stretchID.push_back(nParticlesBeforeAdded + (ii+1)*num2 + jj);
                 ++tmpN;
             }
         }
@@ -233,14 +234,14 @@ void createParticleCloth(glm::vec3 center, float size1, float size2, int32_t axi
         {   
             if (jj < num2 - 2)
             {
-                g_buffer->m_bendID.push_back(ii*num2 + jj);
-                g_buffer->m_bendID.push_back(ii*num2 + jj + 2);
+                g_buffer->m_bendID.push_back(nParticlesBeforeAdded + ii*num2 + jj);
+                g_buffer->m_bendID.push_back(nParticlesBeforeAdded + ii*num2 + jj + 2);
                 ++tmpN;
             }
             if (ii < num1 - 2)
             {
-                g_buffer->m_bendID.push_back(ii*num2 + jj);
-                g_buffer->m_bendID.push_back((ii+2)*num2 + jj);
+                g_buffer->m_bendID.push_back(nParticlesBeforeAdded + ii*num2 + jj);
+                g_buffer->m_bendID.push_back(nParticlesBeforeAdded + (ii+2)*num2 + jj);
                 ++tmpN;
             }
         }
@@ -258,12 +259,12 @@ void createParticleCloth(glm::vec3 center, float size1, float size2, int32_t axi
                 (((ii+1)*num2 + jj + 1) >= num1*num2)||
                 (((ii+1)*num2 + jj) >= num1*num2)||
                 ((ii*num2 + jj + 1) >= num1*num2)) printf("False\n\n\n");
-            g_buffer->m_shearID.push_back(ii*num2 + jj);
-            g_buffer->m_shearID.push_back((ii+1)*num2 + jj + 1);
+            g_buffer->m_shearID.push_back(nParticlesBeforeAdded + ii*num2 + jj);
+            g_buffer->m_shearID.push_back(nParticlesBeforeAdded + (ii+1)*num2 + jj + 1);
             ++tmpN;
             
-            g_buffer->m_shearID.push_back((ii+1)*num2 + jj);
-            g_buffer->m_shearID.push_back(ii*num2 + jj + 1);
+            g_buffer->m_shearID.push_back(nParticlesBeforeAdded + (ii+1)*num2 + jj);
+            g_buffer->m_shearID.push_back(nParticlesBeforeAdded + ii*num2 + jj + 1);
             ++tmpN;
 
             
@@ -278,14 +279,14 @@ void createParticleCloth(glm::vec3 center, float size1, float size2, int32_t axi
     {
         for (int32_t jj = 0 ; jj < num2-1 ; ++jj)
         {   
-            g_buffer->m_triangleID.push_back(ii*num2 + jj);
-            g_buffer->m_triangleID.push_back((ii+1)*num2 + jj + 1);
-            g_buffer->m_triangleID.push_back(ii*num2 + jj + 1);
+            g_buffer->m_triangleID.push_back(nParticlesBeforeAdded + ii*num2 + jj);
+            g_buffer->m_triangleID.push_back(nParticlesBeforeAdded + (ii+1)*num2 + jj + 1);
+            g_buffer->m_triangleID.push_back(nParticlesBeforeAdded + ii*num2 + jj + 1);
             ++tmpN;
             
-            g_buffer->m_triangleID.push_back(ii*num2 + jj);
-            g_buffer->m_triangleID.push_back((ii+1)*num2 + jj + 1);
-            g_buffer->m_triangleID.push_back((ii+1)*num2 + jj);
+            g_buffer->m_triangleID.push_back(nParticlesBeforeAdded + ii*num2 + jj);
+            g_buffer->m_triangleID.push_back(nParticlesBeforeAdded + (ii+1)*num2 + jj + 1);
+            g_buffer->m_triangleID.push_back(nParticlesBeforeAdded + (ii+1)*num2 + jj);
             ++tmpN;
 
         }

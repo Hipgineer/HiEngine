@@ -182,13 +182,19 @@ __global__ void keComputeConstraint(DeviceDataFluid dDataFluid,
 									glm::vec3 	v3MaxPosition,
 									int64_t 	nParticles)
 {
+	__shared__ int gridIndices[32];
+	__shared__ float correctedPos[32 * 64 * 27];
+	__shared__ int phases[32 * 64 * 27];
 	int32_t idx = threadIdx.x + blockIdx.x*blockDim.x;
+
 	if(idx < nParticles)
 	{
+		gridIndices[threadIdx.x] = dDataFluid.gridIndices[idx];
+		__syncthreads();
 		// KernelVariables KV; 
 		// for_NearParticles(ComputeConstraint, dDataFluid, KV); ==> 안에서 IID는 고정, JID는 내부에서 계산
 		// dDataFluid.update;
-
+		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 		computeConstraintKernelVariables KV; 
 		KV.IID					= idx;
 		KV.densityI0			= dDataFluid.phaseParam[dDataFluid.phases[KV.IID]].density;
@@ -202,7 +208,7 @@ __global__ void keComputeConstraint(DeviceDataFluid dDataFluid,
 			for (int32_t zzz = -1 ; zzz < 2  ; ++zzz)
 				for (int32_t xxx = -1 ; xxx < 2  ; ++xxx)
 				{
-					int32_t nearGridID = dDataFluid.gridIndices[idx] + xxx + ix*zzz + ix*iz*yyy;
+					int32_t nearGridID = gridIndices[threadIdx.x] + xxx + ix*zzz + ix*iz*yyy;
 					if ( (nearGridID < 0) || (nearGridID > ix*iy*iz-1) ) continue;
 					int32_t staJID = nearGridID == 0 ? 0 : dDataFluid.numPartInGrids[nearGridID-1];
 					int32_t endJID = dDataFluid.numPartInGrids[nearGridID];
@@ -318,6 +324,16 @@ __global__ void keUpdateVelPos(DeviceDataFluid dDataFluid,
 	}
 }
 
+
+
+inline __device__ bool isInsideBox( glm::vec3 p1, glm::vec3 p2, glm::vec3 point) 
+{
+    return (point.x >= p1.x && point.x <= p2.x &&\
+			point.y >= p1.y && point.y <= p2.y &&\
+			point.z >= p1.z && point.z <= p2.z); 
+}
+
+
 __global__ void kePredictPositionCloth(DeviceDataCloth dDataCloth, 
 								DeviceSimParams dSimParam,
 						 		int64_t 	nParticles)
@@ -326,7 +342,7 @@ __global__ void kePredictPositionCloth(DeviceDataCloth dDataCloth,
 	
 	if(idx < nParticles)
 	{
-		if ((idx == 0) || (idx == 13))
+		if ((idx == 0) || (idx == 148))
 			dDataCloth.velocities[idx] += glm::vec3(0.0f);
 		else
 			dDataCloth.velocities[idx] += dSimParam.commonParam->dt * dSimParam.commonParam->gravity;
@@ -361,8 +377,8 @@ __global__ void keComputeStretchCloth(DeviceDataCloth dDataCloth,
 		float len0= 2.0f * dSimParam.commonParam->radius;
 
         glm::vec3 dP = norm * 0.2f * (len - len0);
-		
-		if ((id0 == 0) || (id0 == 13))
+
+		if ((id0 == 0) || (id0 == 148))
 		{
 
 		}
@@ -373,7 +389,7 @@ __global__ void keComputeStretchCloth(DeviceDataCloth dDataCloth,
 			atomicAdd(&dDataCloth.deltaPos[id0].z, dP.z);	
 		}
 
-		if ((id1 == 0) || (id1 == 13))
+		if ((id1 == 0) || (id1 == 148))
 		{
 			
 		}
@@ -410,8 +426,8 @@ __global__ void keComputeBendCloth(DeviceDataCloth dDataCloth,
 
 
         glm::vec3 dP = norm * 0.2f * (len - len0);
-		
-		if ((id0 == 0) || (id0 == 13))
+
+		if ((id0 == 0) || (id0 == 148))
 		{
 
 		}
@@ -422,7 +438,7 @@ __global__ void keComputeBendCloth(DeviceDataCloth dDataCloth,
 			atomicAdd(&dDataCloth.deltaPos[id0].z, dP.z);	
 		}
 
-		if ((id1 == 0) || (id1 == 13))
+		if ((id1 == 0) || (id1 == 148))
 		{
 			
 		}
@@ -456,8 +472,8 @@ __global__ void keComputeShearCloth(DeviceDataCloth dDataCloth,
 		float len0= sqrt(2.0f) * 2.0f * dSimParam.commonParam->radius;
 
         glm::vec3 dP = norm * 0.2f * (len - len0);
-		
-		if ((id0 == 0) || (id0 == 13))
+
+		if ((id0 == 0) || (id0 == 148))
 		{
 
 		}
@@ -468,7 +484,7 @@ __global__ void keComputeShearCloth(DeviceDataCloth dDataCloth,
 			atomicAdd(&dDataCloth.deltaPos[id0].z, dP.z);	
 		}
 
-		if ((id1 == 0) || (id1 == 13))
+		if ((id1 == 0) || (id1 == 148))
 		{
 			
 		}
@@ -503,7 +519,6 @@ __global__ void keUpdateVelPosCloth(DeviceDataCloth dDataCloth,
 		dDataCloth.positions[idx]  =  dDataCloth.correctedPos[idx];
 	}
 }
-
 
 __global__ void keGetRenderValuesCloth(DeviceDataCloth dDataCloth,
 								int64_t 	nParticles)

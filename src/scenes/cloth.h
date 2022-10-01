@@ -33,6 +33,6 @@ public :
         glm::vec3 initVel = glm::vec3(0.0, 0.0, 0.0);
 
         glm::vec3 centerPoint = glm::vec3(0, 1.0, 0.0);
-        createParticleCloth(centerPoint, size, size, 1, initVel, 0);
+        createParticleCloth(centerPoint, 0.5*size, size, 1, initVel, 0);
     }
 };

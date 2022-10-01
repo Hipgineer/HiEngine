@@ -12,39 +12,24 @@ ContextUPtr Context::Create()
 
 bool Context::Init()
 {
-
-    m_box = Mesh::CreateSphere(10, 10, 0.05f);
-    //m_box = Mesh::CreateBox(glm::vec3(-0.01f,-0.01f,-0.01f),glm::vec3(0.01f,0.01f,0.01f));
+    m_sphere = Mesh::CreateSphere(10, 10, 0.05f);
 
     // Loading Programs
-    m_simpleProgram = Program::Create("./shader/simple.vs", "./shader/simple.fs");
+    m_simpleProgram = Program::Create("../shader/simple.vs", "../shader/simple.fs");
     if (!m_simpleProgram)
         return false;
 
-    m_simpleLightingProgram = Program::Create("./shader/simpleLighting.vs", "./shader/simpleLighting.fs");
-    if (!m_simpleLightingProgram)
-        return false;
-
-    m_pointProgram = Program::Create("./shader/simplePoint.vs","./shader/simplePoint.fs");
-    if (!m_pointProgram)
-        return false;
-
-    m_textureProgram = Program::Create("./shader/texture.vs", "./shader/texture.fs");
-    if (!m_textureProgram)
-        return false;
-
-    m_fluidDepthProgram = Program::Create("./shader/fluidDepth.vs", "./shader/fluidDepth.fs");
+    m_fluidDepthProgram = Program::Create("../shader/fluidDepth.vs", "../shader/fluidDepth.fs");
     if (!m_fluidDepthProgram)
         return false;
         
-    m_fluidThicknessProgram = Program::Create("./shader/fluidThickness.vs", "./shader/fluidThickness.fs");
+    m_fluidThicknessProgram = Program::Create("../shader/fluidThickness.vs", "../shader/fluidThickness.fs");
     if (!m_fluidThicknessProgram)
         return false;
 
-    m_fluidRenderProgram = Program::Create("./shader/fluidRender.vs", "./shader/fluidRender.fs");
+    m_fluidRenderProgram = Program::Create("../shader/fluidRender.vs", "../shader/fluidRender.fs");
     if (!m_fluidRenderProgram)
         return false;
-
 
     // Initializing openGL Scene
     glClearColor(0.0f, 0.1f, 0.2f, 0.0f); // default background color
@@ -61,16 +46,6 @@ bool Context::MapSimBuffer(SimBufferPtr simBuffer)
     m_colors = &simBuffer->m_colorValues;
     m_commonParam = &simBuffer->m_commonParam;
     return true;
-}
-
-void Context::RenderFluidDepth()
-{
-
-}
-
-void Context::RenderFluidThickness()
-{
-
 }
 
 void Context::DrawUI()
@@ -154,16 +129,12 @@ void Context::Render()
 {
     DrawUI();
 
-
     m_framebuffer->Bind();
 
     // opengl - intialize frame
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_PROGRAM_POINT_SIZE);  
-
-
-    // opengl - render elements
+    glEnable(GL_PROGRAM_POINT_SIZE); //enable to revise point vertex size
     
     // Camera Settings
     float fov = 45.0f;
@@ -201,7 +172,7 @@ void Context::Render()
         m_fluidThicknessProgram->SetUniform("viewTransform", view);
         m_fluidThicknessProgram->SetUniform("pointRadius", m_particleSizeRatio*m_commonParam->radius);
         m_fluidThicknessProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f))));
-        pointVertexLayout->Bind();
+        //pointVertexLayout->Bind();
         glDrawArrays(GL_POINTS, 0, m_positions->size());
 
 
@@ -224,7 +195,7 @@ void Context::Render()
         m_fluidDepthProgram->SetUniform("viewTransform", view);
         m_fluidDepthProgram->SetUniform("pointRadius", m_particleSizeRatio*m_commonParam->radius);
         m_fluidDepthProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f))));
-        pointVertexLayout->Bind();
+        //pointVertexLayout->Bind();
         glDrawArrays(GL_POINTS, 0, m_positions->size());
 
 		glDisable(GL_PROGRAM_POINT_SIZE);
@@ -239,15 +210,6 @@ void Context::Render()
     {
         lightPos = m_cameraPos;
         lightDir = m_cameraFront;
-    }
-    else
-    {
-        // after computing projection and view matrix
-        auto lightModelTransform = glm::translate(glm::mat4(1.0), m_light.position) * glm::scale(glm::mat4(1.0),glm::vec3(0.5));
-        m_simpleProgram->Use();
-        m_simpleProgram->SetUniform("color", glm::vec4(m_light.ambient + m_light.diffuse, 1.0f));
-        m_simpleProgram->SetUniform("transform", proj * view * lightModelTransform);
-        m_box->Draw(m_simpleProgram.get());
     }
 
     m_fluidRenderProgram->Use();
@@ -276,10 +238,6 @@ void Context::Render()
     m_fluidRenderProgram->SetUniform("texDepth", 1);
     
     m_plane->Draw(m_fluidRenderProgram.get());
-
-    // ------ 
-    
-
 }
 
 void Context::ProcessInput(GLFWwindow *window)
@@ -353,9 +311,6 @@ void Context::Reshape(int width, int height)
     m_width = width;
     m_height = height;
     glViewport(0, 0, m_width, m_height);
-
-    // m_framebuffer = Framebuffer::Create(
-    //     Texture::Create(width, height, GL_RGBA));
 
     m_framebuffer = Framebuffer::Create(
         Texture::Create(width, height, GL_RGBA), Texture::Create(width, height, GL_DEPTH_COMPONENT));

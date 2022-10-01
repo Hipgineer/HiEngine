@@ -37,6 +37,7 @@ vec3 uvToEye(vec2 coord, float z)
 void main() {
 
     float depth = texture(texDepth, texCoord).r;
+	gl_FragDepth = depth;
 	if(depth <= -1.0f || depth >= 1.0f)
 	{
         // fragColor = texture(tex, texCoord);
@@ -89,7 +90,6 @@ void main() {
 	// -----------------Merge all effect----------------------------
 	fragColor.rgb = diffuse + specular + refractedColor;
 	fragColor.a = 1.0f;
-
 	// gamma correction.
 	// glow map.
 	float brightness = dot(fragColor.rgb, vec3(0.2126, 0.7152, 0.0722));

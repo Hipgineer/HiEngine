@@ -250,8 +250,6 @@ int main(int argc, const char** argv)
     // -- after here, use like "auto pointer = (Context*)glfwGetWindowUserPointer(window);"
     glfwSetWindowUserPointer(g_window, g_context.get());
 
-    // Create Program : pipe line
-
     // Callback functions
     OnFramebufferSizeChange(g_window, WINDOW_WIDTH, WINDOW_HEIGHT); // manually set first frame buffer size
     glfwSetFramebufferSizeCallback(g_window, OnFramebufferSizeChange);
@@ -261,19 +259,17 @@ int main(int argc, const char** argv)
     glfwSetMouseButtonCallback(g_window, OnMouseButton);
     glfwSetScrollCallback(g_window, OnScroll);
 
-
     // Load All Scenes
     g_scenes.push_back(new SphereDrop("Sphere Drop"));
     g_scenes.push_back(new SphereCollision("Sphere Collision"));
     g_scenes.push_back(new DamBreak("Dam Break")); 
     g_scenes.push_back(new Cloth("Cloth"));
+    g_scenes.push_back(new MultiCloth("Multi Cloth"));
     std::vector<Scene*>::iterator scenePtr;
     for (scenePtr = g_scenes.begin(); scenePtr != g_scenes.end(); ++scenePtr)
     {
         g_context->m_sceneList.push_back((**scenePtr).mName);
     }
-    
-    // g_scenes[0].nName
 
     // Load Current Scene
     g_scene = 0;
@@ -285,33 +281,21 @@ int main(int argc, const char** argv)
     while (!glfwWindowShouldClose(g_window)) {
 
         // Change Scene
-        // if (g_context->m_selectedScene != -1)
         if (g_context->m_reloadScene)
         {
-            g_context->m_reloadScene = false;
-            printf("Scene Reload");
-
-            // Clear Solver and SimBuffer
             g_hiPhysics->ClearMemory();
-            g_hiPhysics.reset(); // or g_solver = nullptr;
+            g_hiPhysics.reset();
             g_buffer.reset();
-            
             g_scene = g_context->m_selectedScene;
-            // Initialize Solver and SimBuffer
             InitializeWithScene(g_scene);
-
-            g_pause = true; // pause update or not
+            g_pause = true;
+            g_context->m_reloadScene = false;
+            SPDLOG_INFO("Scene Reload");
         }
-        
-        glfwPollEvents(); // collecting events of mouse and keyboard
+
+        glfwPollEvents(); 
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-
-        //TODO : interactive callbacks with HiPhysics
-        // if (!g_callback)
-        // {
-        //     g_hiPhysics->SetDeviceMemory(g_buffer, idx);
-        // }
 
         if (g_scenes[g_scene]->mSceneType == StateOfMatter::FLUID)
         {
@@ -339,10 +323,6 @@ int main(int argc, const char** argv)
                 return -1;
             }
         }
-        
-        //TODO : BufferMapping - directly mapping opengl to HiPhysics data pointer? 
-        // - https://stackoverflow.com/questions/23968591/how-to-access-data-on-cuda-by-opengl
-        //   - Somebody tried to do it.
 
         g_context->ProcessInput(g_window);
         g_context->Render();
