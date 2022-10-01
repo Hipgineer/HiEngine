@@ -35,24 +35,21 @@ public:
     std::vector<const char*> m_sceneList;
 
 private:
-    void RenderFluidDepth();
-    void RenderFluidThickness();
-    void RenderFluid();
-    void DrawUI();
     Context() {};
+    void DrawUI();
     bool Init();
     ProgramUPtr m_program;
     ProgramUPtr m_simpleProgram;
-    ProgramUPtr m_simpleLightingProgram;
-    ProgramUPtr m_pointProgram;
-    ProgramUPtr m_textureProgram;
-    ProgramUPtr m_postProgram; 
+    //ProgramUPtr m_simpleLightingProgram;
+    //ProgramUPtr m_pointProgram;
+    //ProgramUPtr m_textureProgram;
+    //ProgramUPtr m_postProgram; 
 
     ProgramUPtr m_fluidDepthProgram;
     ProgramUPtr m_fluidThicknessProgram;
     ProgramUPtr m_fluidRenderProgram;
 
-    MeshUPtr m_box;
+    MeshUPtr m_sphere;
     MeshUPtr m_plane;
     std::vector<MeshUPtr> m_boxes;
     ModelUPtr m_model;
