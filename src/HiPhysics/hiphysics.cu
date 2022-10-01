@@ -622,7 +622,7 @@ bool HiPhysics::ComputeConstraint(SimBufferPtr simBuffer){
     glm::vec3 minPosition = min_element_xyz(&simBuffer->m_positions) - glm::vec3(simBuffer->m_commonParam.radius);
 
     // Compute Constraints
-    keComputeConstraint<<< 1 +  m_numParticles/256, 256>>>(dm_DataFluid, minPosition, maxPosition, m_numParticles);
+    keComputeConstraint<<< 1 + m_numParticles / 32, 32 >>>(dm_DataFluid, minPosition, maxPosition, m_numParticles);
     cudaError = cudaGetLastError();
     if (cudaError != cudaSuccess)
     {
@@ -632,7 +632,7 @@ bool HiPhysics::ComputeConstraint(SimBufferPtr simBuffer){
     cudaDeviceSynchronize();
 
     // Correct Positions
-    keComputePositionCorrection<<< 1 +  m_numParticles/256, 256>>>(dm_DataFluid, minPosition, maxPosition, m_numParticles);
+    keComputePositionCorrection<<< 1 + m_numParticles / 256, 256 >>>(dm_DataFluid, minPosition, maxPosition, m_numParticles);
     cudaError = cudaGetLastError();
     if (cudaError != cudaSuccess)
     {
