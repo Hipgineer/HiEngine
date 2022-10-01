@@ -20,6 +20,7 @@ public :
 #include "sphereCollision.h"
 #include "damBreak.h"
 #include "cloth.h"
+#include "multi_cloth.h"
 
 #endif // __SCENES_H__
 /*

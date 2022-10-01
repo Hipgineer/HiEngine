@@ -1,9 +1,9 @@
 // Test Scene
 // 
-class Cloth : public Scene
+class MultiCloth : public Scene
 {
 public :
-    Cloth(const char* name) : Scene(name, StateOfMatter::CLOTH) {}
+    MultiCloth(const char* name) : Scene(name, StateOfMatter::CLOTH) {}
 
 	virtual void Init()
     {
@@ -22,6 +22,7 @@ public :
         g_buffer->m_commonParam.gravity             = glm::vec3(0.0f, -10.0f, 0.0f);
         g_buffer->m_commonParam.AnalysisBox         = boxPoint(glm::vec3(-10.f, -10.0f, -10.0f), glm::vec3(10.f, 10.f, 10.f));
 
+
         PhaseParameters Sweater;
         Sweater.phaseType = StateOfMatter::CLOTH;
         Sweater.density = 1000.0f; 
@@ -29,10 +30,18 @@ public :
         g_buffer->m_phaseParam.push_back(Sweater);
 
         // Generate Planes
-        float size = 0.3;
+        float size = 0.5;
         glm::vec3 initVel = glm::vec3(0.0, 0.0, 0.0);
 
-        glm::vec3 centerPoint = glm::vec3(0, 1.0, 0.0);
-        createParticleCloth(centerPoint, 0.5*size, size, 1, initVel, 0);
+        // boxPoint fixedBox1 = boxPoint(glm::vec3(-0.01, 0.99, -0.01), glm::vec3(0.01, 1.01, 0.01));
+        // g_buffer->m_commonParam.fixedBox.push_back(fixedBox1);
+        glm::vec3 minPoint = glm::vec3(0, 1.0, 0.0);        
+        createParticleCloth(minPoint, 0.51, 0.3, 1, initVel, 0);
+
+
+        // boxPoint fixedBox2 = boxPoint(glm::vec3(0.49, 0.99, -0.01), glm::vec3(0.51, 1.01, 0.01));
+        // g_buffer->m_commonParam.fixedBox.push_back(fixedBox2);
+        // glm::vec3 minPoint2 = glm::vec3(0.5, 1.0, 0.0);
+        // createParticleCloth(minPoint2, size, size, 1, initVel, 0);
     }
 };

@@ -32,6 +32,7 @@ struct CommonParameters {
 	glm::vec3 gravity;
 	int32_t iterationNumber;
 	boxPoint AnalysisBox;
+	std::vector<boxPoint> fixedBox;
 	
 	CommonParameters() : 
 		radius(0.1f), 
@@ -44,6 +45,7 @@ struct CommonParameters {
 		gravity(glm::vec3(0.0f, -9.81f, 0.0f)),
 		iterationNumber(3),
 		AnalysisBox(boxPoint(glm::vec3(0.0f), glm::vec3(1.0f)))
+		// fixedBox(nullptr)
 		{};
 };
 
