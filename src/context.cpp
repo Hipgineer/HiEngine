@@ -172,7 +172,7 @@ void Context::Render()
         m_fluidThicknessProgram->SetUniform("viewTransform", view);
         m_fluidThicknessProgram->SetUniform("pointRadius", m_particleSizeRatio*m_commonParam->radius);
         m_fluidThicknessProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f))));
-        pointVertexLayout->Bind();
+        //pointVertexLayout->Bind();
         glDrawArrays(GL_POINTS, 0, m_positions->size());
 
 
@@ -195,7 +195,7 @@ void Context::Render()
         m_fluidDepthProgram->SetUniform("viewTransform", view);
         m_fluidDepthProgram->SetUniform("pointRadius", m_particleSizeRatio*m_commonParam->radius);
         m_fluidDepthProgram->SetUniform("pointScale", (float)m_width/aspect * (1.0f / glm::tan(glm::radians(fov*0.5f))));
-        pointVertexLayout->Bind();
+        //pointVertexLayout->Bind();
         glDrawArrays(GL_POINTS, 0, m_positions->size());
 
 		glDisable(GL_PROGRAM_POINT_SIZE);

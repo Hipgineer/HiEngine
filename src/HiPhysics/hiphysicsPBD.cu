@@ -520,7 +520,6 @@ __global__ void keUpdateVelPosCloth(DeviceDataCloth dDataCloth,
 	}
 }
 
-
 __global__ void keGetRenderValuesCloth(DeviceDataCloth dDataCloth,
 								int64_t 	nParticles)
 {
